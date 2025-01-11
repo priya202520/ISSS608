@@ -1,0 +1,7 @@
+---
+title: "ISSS608"
+---
+
+Welcome to **ISSS608 Visual Analytics and Applications!**
+
+![](images/DALL·E%202025-01-11%2011.30.03%20-%20A%20realistic%20depiction%20of%20a%20data%20analyst%20working%20with%20R%20programming%20software%20on%20a%20desktop.%20The%20scene%20features%20a%20modern%20workspace%20with%20a%20dual-monitor%20se.webp)
