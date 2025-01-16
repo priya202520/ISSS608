@@ -35,7 +35,7 @@ ggplot(data=exam_data, aes(x = MATHS)) +
 ggplot(data=exam_data)
 ```
 
-1.4 **Essential Grammatical Elements in ggplot2: Aesthetic mappings**
+**1.4 Essential Grammatical Elements in ggplot2: Aesthetic mappings**
 
 ```{r}
 ggplot(data=exam_data, 
