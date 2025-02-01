@@ -4,7 +4,7 @@ title: "Hands-on_Ex01"
 
 # **A Layered Grammar of Graphics: ggplot2 methods**
 
-![](images/Screenshot 2025-01-16 224655.png)
+![](images/Screenshot%202025-01-16%20224655.png)
 
 **1.1 Importing data**
 
