@@ -4,7 +4,7 @@ title: "Hands-on_Ex02"
 
 ## **2 Beyond ggplot2 Fundamentals**
 
-![](images/DALL·E 2025-01-19 10.59.59 - A detailed and vibrant conceptual artwork illustrating advanced data visualization concepts beyond the basics of ggplot2 in R. The image features char.webp)
+![](images/DALL·E%202025-01-19%2010.59.59%20-%20A%20detailed%20and%20vibrant%20conceptual%20artwork%20illustrating%20advanced%20data%20visualization%20concepts%20beyond%20the%20basics%20of%20ggplot2%20in%20R.%20The%20image%20features%20char.webp)
 
 **2.1** **Installing and loading the required libraries**
 
