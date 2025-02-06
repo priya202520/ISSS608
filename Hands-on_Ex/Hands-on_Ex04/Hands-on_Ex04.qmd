@@ -1,0 +1,287 @@
+---
+title: "Hands-on_Exercise 4"
+author: "Priya"
+date: "February 6,2025"
+date-modified: "last-modified"
+execute:
+  echo: true
+  eval: true
+  warning: false
+  freeze: true
+---
+
+# **4.a) Visualizing distribution**
+
+4.1.1 Loading packages
+
+```{r}
+  pacman::p_load(ggdist, ggridges, ggthemes,
+               colorspace, tidyverse)
+```
+
+4.1.2 Data Import
+
+```{r}
+exam <- read_csv("data/Exam_data.csv")
+```
+
+4.1.3 **Visualising Distribution with Ridgeline Plot(Joyplot) : ggridges method**
+
+A **ridgeline plot** using `ggridges` in **R** is created with `geom_density_ridges()`, which visualizes the distribution of a numeric variable across multiple categories by stacking smoothed density plots.
+
+```{r}
+ggplot(exam, 
+       aes(x = ENGLISH, 
+           y = CLASS)) +
+  geom_density_ridges(
+    scale = 3,
+    rel_min_height = 0.01,
+    bandwidth = 3.4,
+    fill = lighten("#C8A2C8", .3),
+    color = "white"
+  ) +
+  scale_x_continuous(
+    name = "English grades",
+    expand = c(0, 0)
+    ) +
+  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +
+  theme_ridges()
+```
+
+4.1.4 **Varying fill colors along the x axis**
+
+In **ggridges**, you can vary fill colors along the x-axis by mapping a continuous variable to `fill` inside `aes()`, and using `scale_fill_gradient()` or `scale_fill_viridis_c()` to apply a color gradient.
+
+```{r}
+ggplot(exam, 
+       aes(x = ENGLISH, 
+           y = CLASS,
+           fill = stat(x))) +
+  geom_density_ridges_gradient(
+    scale = 3,
+    rel_min_height = 0.01) +
+  scale_fill_viridis_c(name = "Temp. [F]",
+                       option = "C") +
+  scale_x_continuous(
+    name = "English grades",
+    expand = c(0, 0)
+  ) +
+  scale_y_discrete(name = NULL, expand = expansion(add = c(0.2, 2.6))) +
+  theme_ridges()
+```
+
+4.1.5 **Mapping the probabilities directly onto colour**
+
+In **ggridges**, you can map probabilities directly onto color by setting `fill` inside `aes()` to `..scaled..` or `stat(density)`, and then using `scale_fill_gradient()` to apply a color scale.
+
+```{r}
+ggplot(exam,
+       aes(x = ENGLISH, 
+           y = CLASS, 
+           fill = 0.5 - abs(0.5-stat(ecdf)))) +
+  stat_density_ridges(geom = "density_ridges_gradient", 
+                      calc_ecdf = TRUE) +
+  scale_fill_viridis_c(name = "Tail probability",
+                       direction = -1) +
+  theme_ridges()
+```
+
+4.1.6 **Ridgeline plots with quantile lines**
+
+In **ggridges**, you can add quantile lines to ridgeline plots by using `geom_density_ridges(quantile_lines = TRUE, quantiles = c(0.25, 0.5, 0.75))` to display median and quartiles.
+
+```{r}
+ggplot(exam, 
+       aes(x = ENGLISH, 
+           y = CLASS, 
+           fill = factor(stat(quantile))
+       )) +
+  stat_density_ridges(
+    geom = "density_ridges_gradient",
+    calc_ecdf = TRUE, 
+    quantiles = 4,
+    quantile_lines = TRUE
+  ) +
+  scale_fill_brewer(palette = "Set2", name = "Quartiles") +
+  theme_ridges()
+
+```
+
+```{r}
+ggplot(exam,
+       aes(x = ENGLISH, 
+           y = CLASS, 
+           fill = factor(stat(quantile))
+           )) +
+  stat_density_ridges(
+    geom = "density_ridges_gradient",
+    calc_ecdf = TRUE, 
+    quantiles = c(0.025, 0.975)
+    ) +
+  scale_fill_manual(
+    name = "Probability",
+    values = c("#C8A2C8", "#FFD700", "#FF8C00"),
+    labels = c("(0, 0.025]", "(0.025, 0.975]", "(0.975, 1]")
+  ) +
+  theme_ridges()
+
+```
+
+4.2 **Visualising Distribution with Raincloud Plot**
+
+A **Raincloud plot** combines a **violin plot, box plot, and raw jittered data points** to provide a detailed visualization of a distribution, typically created in R using the `ggplot2` and `ggdist` packages.
+
+4.2.1 **Plotting a Half Eye graph**
+
+A **Half-Eye plot** in R, created using `ggdist::stat_halfeye()`, visualizes a distribution with a **density plot, point interval, and optional slab** to highlight key summary statistics.
+
+```{r}
+ggplot(exam, 
+       aes(x = RACE, 
+           y = ENGLISH)) +
+  stat_halfeye(adjust = 0.5,
+               justification = -0.2,
+               .width = 0,
+               point_colour = "#C8A2C8")
+
+```
+
+4.2.2 **Adding the boxplot with `geom_boxplot()`**
+
+You can add a **boxplot** to a **Half-Eye plot** by including `geom_boxplot(width = 0.2, outlier.shape = NA)` to display summary statistics without overlapping outliers.
+
+```{r}
+ggplot(exam, 
+       aes(x = RACE, 
+           y = ENGLISH)) +
+  stat_halfeye(adjust = 0.5,
+               justification = -0.2,
+               .width = 0,
+               point_colour = "#C8A2C8") +
+  geom_boxplot(width = .20,
+               outlier.shape = NA)
+```
+
+4.2.3 **Adding the Dot Plots with `stat_dots()`**
+
+You can add **dot plots** to a **Half-Eye plot** by including `stat_dots(side = "left", dotsize = 0.5)` to show individual data points alongside the density.
+
+```{r}
+ggplot(exam, 
+       aes(x = RACE, 
+           y = ENGLISH)) +
+  stat_halfeye(adjust = 0.5,
+               justification = -0.2,
+               .width = 0,
+               point_colour = NA) +
+  geom_boxplot(width = .20,
+               outlier.shape = NA) +
+  stat_dots(side = "left", 
+            justification = 1.2, 
+            binwidth = .5,
+            dotsize = 0.5)
+```
+
+4.2.4 Finishing touch
+
+```{r}
+ggplot(exam, 
+       aes(x = RACE, 
+           y = ENGLISH)) +
+  stat_halfeye(adjust = 0.5,
+               justification = -0.2,
+               .width = 0,
+               point_colour = NA) +
+  geom_boxplot(width = .20,
+               outlier.shape = NA) +
+  stat_dots(side = "left", 
+            justification = 1.2, 
+            binwidth = .5,
+            dotsize = 1.5) +
+  coord_flip() +
+  theme_economist()
+```
+
+# **4.b) Visual Statistical Analysis**
+
+**Visual statistical analysis** involves using graphical representations like histograms, box plots, and density plots to explore data distributions, trends, and relationships, often enhanced with statistical summaries and significance tests.
+
+4.3 **Visual Statistical Analysis with ggstatsplot**
+
+The **ggstatsplot** package in R enables **visual statistical analysis** by combining `ggplot2` with statistical tests, providing plots with effect sizes, confidence intervals, and significance annotations
+
+4.3.1 Installing , Launching R packages and Importing data
+
+```{r}
+pacman::p_load(ggstatsplot, tidyverse)
+```
+
+```{r}
+exam <- read_csv("data/Exam_data.csv")
+```
+
+4.3.2 **One-sample test: *gghistostats()* method**
+
+4.3.3 **Unpacking the Bayes Factor**
+
+4.3.4 **How to interpret Bayes Factor**
+
+4.3.5 **Two-sample mean test: *ggbetweenstats()***
+
+4.3.6 **Oneway ANOVA Test: *ggbetweenstats()* method**
+
+4.3.7 **Significant Test of Correlation: *ggscatterstats()***
+
+4.3.8 **Significant Test of Association (Depedence) : *ggbarstats()* methods**
+
+4.4 **Visualising Models**
+
+```{r}
+pacman::p_load(readxl, performance, parameters, see)
+```
+
+4.4.1 **Importing Excel file: readxl methods**
+
+4.4.2 **Multiple Regression Model using lm()**
+
+4.4.3 **Model Diagnostic: checking for multicolinearity:**
+
+4.4.4 **Model Diagnostic: checking normality assumption**
+
+4.4.5 **Model Diagnostic: Check model for homogeneity of variances**
+
+4.4.6 **Model Diagnostic: Complete check**
+
+4.4.7 **Visualising Regression Parameters: see methods**
+
+4.4.8 **Visualising Regression Parameters: *ggcoefstats()* methods**
+
+# **4.c)  Visualising Uncertainty**
+
+4.5 Installing , Launching R packages and Importing data
+
+4.5.1 **Visualizing the uncertainty of point estimates: ggplot2 methods**
+
+4.5.2 **Plotting standard error bars of point estimates**
+
+4.5.3 **Plotting confidence interval of point estimates**
+
+4.5.4 **Visualizing the uncertainty of point estimates with interactive error bars**
+
+4.6 **Visualising Uncertainty: ggdist package**
+
+4.6.1 **Visualizing the uncertainty of point estimates: ggdist methods**
+
+4.6.2 **Visualizing the uncertainty of point estimates: ggdist methods**
+
+4.6.3 **Visualizing the uncertainty of point estimates: ggdist methods**
+
+4.7 **Visualising Uncertainty with Hypothetical Outcome Plots (HOPs)**
+
+4.7.1 **Installing and launching ungeviz package**
+
+4.7.2 **Visualising Uncertainty with Hypothetical Outcome Plots (HOPs)**
+
+# **4.d)  Funnel Plots for Fair Comparisons**
+
+4.8 **Installing , Importing and Launching R Packages**
