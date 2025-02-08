@@ -1,0 +1,17 @@
+{
+  "hash": "926fccc4bb5aef30aeb3693d9d7ec3fc",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"In-class_Exercise 4\"\nauthor: \"Priya\"\ndate: \"February 8,2025\"\ndate-modified: \"last-modified\"\nexecute:\n  echo: true\n  eval: true\n  warning: false\n  freeze: true\n---\n\n::: {.cell}\n\n```{.r .cell-code}\npacman::p_load(haven, SmartEDA, tidyverse, tidymodels)\n```\n:::\n\n\n\n------------------------------------------------------------------------\n\n------------------------------------------------------------------------\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\nexam_data <- read_csv(\"Exam_data.csv\")\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nggplot(data = exam_data,\n        aes(x= ENGLISH,\n            y= CLASS)) +\n      geom_boxplot()\n```\n\n::: {.cell-output-display}\n![](In_Class_Ex04_files/figure-html/unnamed-chunk-3-1.png){width=672}\n:::\n:::\n\n\n\n------------------------------------------------------------------------\n\n------------------------------------------------------------------------\n",
+    "supporting": [
+      "In_Class_Ex04_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -1,0 +1,34 @@
+---
+title: "In-class_Exercise 4"
+author: "Priya"
+date: "February 8,2025"
+date-modified: "last-modified"
+execute:
+  echo: true
+  eval: true
+  warning: false
+  freeze: true
+---
+
+```{r}
+pacman::p_load(haven, SmartEDA, tidyverse, tidymodels)
+```
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
+
+```{r}
+exam_data <- read_csv("Exam_data.csv")
+```
+
+```{r}
+ggplot(data = exam_data,
+        aes(x= ENGLISH,
+            y= CLASS)) +
+      geom_boxplot()
+```
+
+------------------------------------------------------------------------
+
+------------------------------------------------------------------------
