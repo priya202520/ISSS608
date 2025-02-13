@@ -1,1 +1,27 @@
 /* css styles */
+body {
+    background-color: #FFFFFF; /* Lilac background */
+    color: #5a2d6b; /* Dark purple text */
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #f2d9e8; /* Pink headers */
+}
+a {
+    color: #5a2d6b; /* Link color */
+    text-decoration: none;
+}
+a:hover {
+    color:  #f2d9e8; /* Hover color for links */
+}
+code {
+    background-color: #f2d9e8; /* Lilac code background */
+    color: #5a2d6b; /* Code text */
+    border-radius: 4px;
+    padding: 2px 4px;
+}
+pre {
+    background-color: #f2d9e8; /* Lilac preformatted text background */
+    color: #5a2d6b;
+    border-radius: 6px;
+    padding: 10px;
+}

@@ -1,5 +1,6 @@
 ---
 title: "ISSS608"
+theme: Journal
 ---
 
 Welcome to **ISSS608 Visual Analytics and Applications!**

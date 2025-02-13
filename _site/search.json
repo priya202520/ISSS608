@@ -117,5 +117,117 @@
     "title": "In-class_Exercise 4",
     "section": "",
     "text": "pacman::p_load(haven, SmartEDA, tidyverse, tidymodels)\n\n\n\n\nexam_data &lt;- read_csv(\"Exam_data.csv\")\n\n\nggplot(data = exam_data,\n        aes(x= ENGLISH,\n            y= CLASS)) +\n      geom_boxplot()"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html",
+    "title": "Hands-on_Exercise 5",
+    "section": "",
+    "text": "Ternary plots are a way of displaying the distribution and variability of three-part compositional data\n\n\n\npacman::p_load(plotly, ggtern, tidyverse)\n\n\n\n\n\n\n\n#Reading the data into R environment\npop_data &lt;- read_csv(\"data/respopagsex2000to2018_tidy.csv\") \n\n\n\n\n\n#Deriving the young, economy active and old measures\nagpop_mutated &lt;- pop_data %&gt;%\n  mutate(`Year` = as.character(Year))%&gt;%\n  spread(AG, Population) %&gt;%\n  mutate(YOUNG = rowSums(.[4:8]))%&gt;%\n  mutate(ACTIVE = rowSums(.[9:16]))  %&gt;%\n  mutate(OLD = rowSums(.[17:21])) %&gt;%\n  mutate(TOTAL = rowSums(.[22:24])) %&gt;%\n  filter(Year == 2018)%&gt;%\n  filter(TOTAL &gt; 0)\n\n\n\n\n\n\n\n\n#Building the static ternary plot\nggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point()\n\n\n\n\n\n\n\n\n\n#Building the static ternary plot\nggtern(data=agpop_mutated, aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point() +\n  labs(title=\"Population structure, 2015\") +\n  theme_rgbw()\n\n\n\n\n\n\n\n\n\n\n\n\n# reusable function for creating annotation object\nlabel &lt;- function(txt) {\n  list(\n    text = txt, \n    x = 0.1, y = 1,\n    ax = 0, ay = 0,\n    xref = \"paper\", yref = \"paper\", \n    align = \"center\",\n    font = list(family = \"serif\", size = 15, color = \"white\"),\n    bgcolor = \"#b3b3b3\", bordercolor = \"black\", borderwidth = 2\n  )\n}\n\n# reusable function for axis formatting\naxis &lt;- function(txt) {\n  list(\n    title = txt, tickformat = \".0%\", tickfont = list(size = 10)\n  )\n}\n\nternaryAxes &lt;- list(\n  aaxis = axis(\"Young\"), \n  baxis = axis(\"Active\"), \n  caxis = axis(\"Old\")\n)\n\n# Initiating a plotly visualization \nplot_ly(\n  agpop_mutated, \n  a = ~YOUNG, \n  b = ~ACTIVE, \n  c = ~OLD, \n  color = I(\"black\"), \n  type = \"scatterternary\"\n) %&gt;%\n  layout(\n    annotations = label(\"Ternary Markers\"), \n    ternary = ternaryAxes\n  )"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#creating-ternary-plot-with-r",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#creating-ternary-plot-with-r",
+    "title": "Hands-on_Exercise 5",
+    "section": "",
+    "text": "Ternary plots are a way of displaying the distribution and variability of three-part compositional data\n\n\n\npacman::p_load(plotly, ggtern, tidyverse)\n\n\n\n\n\n\n\n#Reading the data into R environment\npop_data &lt;- read_csv(\"data/respopagsex2000to2018_tidy.csv\") \n\n\n\n\n\n#Deriving the young, economy active and old measures\nagpop_mutated &lt;- pop_data %&gt;%\n  mutate(`Year` = as.character(Year))%&gt;%\n  spread(AG, Population) %&gt;%\n  mutate(YOUNG = rowSums(.[4:8]))%&gt;%\n  mutate(ACTIVE = rowSums(.[9:16]))  %&gt;%\n  mutate(OLD = rowSums(.[17:21])) %&gt;%\n  mutate(TOTAL = rowSums(.[22:24])) %&gt;%\n  filter(Year == 2018)%&gt;%\n  filter(TOTAL &gt; 0)\n\n\n\n\n\n\n\n\n#Building the static ternary plot\nggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point()\n\n\n\n\n\n\n\n\n\n#Building the static ternary plot\nggtern(data=agpop_mutated, aes(x=YOUNG,y=ACTIVE, z=OLD)) +\n  geom_point() +\n  labs(title=\"Population structure, 2015\") +\n  theme_rgbw()\n\n\n\n\n\n\n\n\n\n\n\n\n# reusable function for creating annotation object\nlabel &lt;- function(txt) {\n  list(\n    text = txt, \n    x = 0.1, y = 1,\n    ax = 0, ay = 0,\n    xref = \"paper\", yref = \"paper\", \n    align = \"center\",\n    font = list(family = \"serif\", size = 15, color = \"white\"),\n    bgcolor = \"#b3b3b3\", bordercolor = \"black\", borderwidth = 2\n  )\n}\n\n# reusable function for axis formatting\naxis &lt;- function(txt) {\n  list(\n    title = txt, tickformat = \".0%\", tickfont = list(size = 10)\n  )\n}\n\nternaryAxes &lt;- list(\n  aaxis = axis(\"Young\"), \n  baxis = axis(\"Active\"), \n  caxis = axis(\"Old\")\n)\n\n# Initiating a plotly visualization \nplot_ly(\n  agpop_mutated, \n  a = ~YOUNG, \n  b = ~ACTIVE, \n  c = ~OLD, \n  color = I(\"black\"), \n  type = \"scatterternary\"\n) %&gt;%\n  layout(\n    annotations = label(\"Ternary Markers\"), \n    ternary = ternaryAxes\n  )"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#installing-and-launching-r-packages-1",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#installing-and-launching-r-packages-1",
+    "title": "Hands-on_Exercise 5",
+    "section": "6.2 Installing and Launching R Packages",
+    "text": "6.2 Installing and Launching R Packages\n\npacman::p_load(corrplot, ggstatsplot, tidyverse)\n\n\n6.3.1 Importing Data\n\nwine &lt;- read_csv(\"data/wine_quality.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#building-correlation-matrix-pairs-method",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#building-correlation-matrix-pairs-method",
+    "title": "Hands-on_Exercise 5",
+    "section": "6.4 Building Correlation Matrix: pairs() method",
+    "text": "6.4 Building Correlation Matrix: pairs() method\n\n6.4.1 Building a basic correlation matrix\n\npairs(wine[,1:11])\n\n\n\n\n\n\n\n\n\npairs(wine[,2:12])\n\n\n\n\n\n\n\n\n\n\n6.4.2 Drawing the lower corner\n\npairs(wine[,2:12], upper.panel = NULL)\n\n\n\n\n\n\n\n\n\npairs(wine[,2:12], lower.panel = NULL)\n\n\n\n\n\n\n\n\n\n\n6.4.3 Including with correlation coefficients\n\npanel.cor &lt;- function(x, y, digits=2, prefix=\"\", cex.cor, ...) {\nusr &lt;- par(\"usr\")\non.exit(par(usr))\npar(usr = c(0, 1, 0, 1))\nr &lt;- abs(cor(x, y, use=\"complete.obs\"))\ntxt &lt;- format(c(r, 0.123456789), digits=digits)[1]\ntxt &lt;- paste(prefix, txt, sep=\"\")\nif(missing(cex.cor)) cex.cor &lt;- 0.8/strwidth(txt)\ntext(0.5, 0.5, txt, cex = cex.cor * (1 + r) / 2)\n}\n\npairs(wine[,2:12], \n      upper.panel = panel.cor)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#visualising-correlation-matrix-ggcormat",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#visualising-correlation-matrix-ggcormat",
+    "title": "Hands-on_Exercise 5",
+    "section": "6.5 Visualising Correlation Matrix: ggcormat()",
+    "text": "6.5 Visualising Correlation Matrix: ggcormat()\n\n6.5.1 The basic plot\n\nggstatsplot::ggcorrmat(\n  data = wine, \n  cor.vars = 1:11)\n\n\n\n\n\n\n\n\n\nggstatsplot::ggcorrmat(\n  data = wine, \n  cor.vars = 1:11,\n  ggcorrplot.args = list(outline.color = \"black\", \n                         hc.order = TRUE,\n                         tl.cex = 10),\n  title    = \"Correlogram for wine dataset\",\n  subtitle = \"Four pairs are no significant at p &lt; 0.05\"\n)\n\n\n\n\n\n\n\n\n\nggplot.component = list(\n    theme(text=element_text(size=5),\n      axis.text.x = element_text(size = 8),\n      axis.text.y = element_text(size = 8)))"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#building-multiple-plots",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#building-multiple-plots",
+    "title": "Hands-on_Exercise 5",
+    "section": "6.6 Building multiple plots",
+    "text": "6.6 Building multiple plots\n\ngrouped_ggcorrmat(\n  data = wine,\n  cor.vars = 1:11,\n  grouping.var = type,\n  type = \"robust\",\n  p.adjust.method = \"holm\",\n  plotgrid.args = list(ncol = 2),\n  ggcorrplot.args = list(outline.color = \"black\", \n                         hc.order = TRUE,\n                         tl.cex = 10),\n  annotation.args = list(\n    tag_levels = \"a\",\n    title = \"Correlogram for wine dataset\",\n    subtitle = \"The measures are: alcohol, sulphates, fixed acidity, citric acid, chlorides, residual sugar, density, free sulfur dioxide and volatile acidity\",\n    caption = \"Dataset: UCI Machine Learning Repository\"\n  )\n)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#visualising-correlation-matrix-using-corrplot-package",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#visualising-correlation-matrix-using-corrplot-package",
+    "title": "Hands-on_Exercise 5",
+    "section": "6.7 Visualising Correlation Matrix using corrplot Package",
+    "text": "6.7 Visualising Correlation Matrix using corrplot Package\n\n6.7.1 Getting started with corrplot\n\nwine.cor &lt;- cor(wine[, 1:11])\n\n\ncorrplot(wine.cor)\n\n\n\n\n\n\n\n\n\n\n6.7.2 Working with visual geometrics\n\ncorrplot(wine.cor, \n         method = \"ellipse\") \n\n\n\n\n\n\n\n\n\n\n6.7.3 Working with layout\n\ncorrplot(wine.cor, \n         method = \"ellipse\", \n         type=\"lower\")\n\n\n\n\n\n\n\n\n\ncorrplot(wine.cor, \n         method = \"ellipse\", \n         type=\"lower\",\n         diag = FALSE,\n         tl.col = \"black\")\n\n\n\n\n\n\n\n\n\n\n6.7.4 Working with mixed layout\n\ncorrplot.mixed(wine.cor, \n               lower = \"ellipse\", \n               upper = \"number\",\n               tl.pos = \"lt\",\n               diag = \"l\",\n               tl.col = \"black\")\n\n\n\n\n\n\n\n\n\ncorrplot.mixed(wine.cor, \n               lower = \"ellipse\", \n               upper = \"number\",\n               tl.pos = \"lt\",\n               diag = \"l\",\n               tl.col = \"black\")\n\n\n\n\n\n\n\n\n\n\n6.7.5 Combining corrgram with the significant test\n\nwine.sig = cor.mtest(wine.cor, conf.level= .95)\n\n\ncorrplot(wine.cor,\n         method = \"number\",\n         type = \"lower\",\n         diag = FALSE,\n         tl.col = \"black\",\n         tl.srt = 45,\n         p.mat = wine.sig$p,\n         sig.level = .05)\n\n\n\n\n\n\n\n\n\n\n6.7.6 Reorder a corrgram\n\ncorrplot.mixed(wine.cor, \n               lower = \"ellipse\", \n               upper = \"number\",\n               tl.pos = \"lt\",\n               diag = \"l\",\n               order=\"AOE\",\n               tl.col = \"black\")\n\n\n\n\n\n\n\n\n\n\n6.7.7 Reordering a correlation matrix using hclust\n\ncorrplot(wine.cor, \n         method = \"ellipse\", \n         tl.pos = \"lt\",\n         tl.col = \"black\",\n         order=\"hclust\",\n         hclust.method = \"ward.D\",\n         addrect = 3)\n\n\n\n\n\n\n\n\n7 Heatmap for Visualising and Analysing Multivariate Data"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#installing-and-launching-r-packages-2",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#installing-and-launching-r-packages-2",
+    "title": "Hands-on_Exercise 5",
+    "section": "14.2 Installing and Launching R Packages",
+    "text": "14.2 Installing and Launching R Packages\n\npacman::p_load(seriation, dendextend, heatmaply, tidyverse)\n\n\n14.3.1 Importing the data set\n\nwh &lt;- read_csv(\"data/WHData-2018.csv\")\n\n\n\n14.3.2 Preparing the data\n\nrow.names(wh) &lt;- wh$Country\n\n\n\n14.3.3 Transforming the data frame into a matrix\n\nwh1 &lt;- dplyr::select(wh, c(3, 7:12))\nwh_matrix &lt;- data.matrix(wh)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#static-heatmap",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#static-heatmap",
+    "title": "Hands-on_Exercise 5",
+    "section": "14.4 Static Heatmap",
+    "text": "14.4 Static Heatmap\n\n14.4.1 heatmap() of R Stats\n\nwh_heatmap &lt;- heatmap(wh_matrix,\n                      Rowv=NA, Colv=NA)\n\n\n\n\n\n\n\n\n\nwh_heatmap &lt;- heatmap(wh_matrix)\n\n\n\n\n\n\n\n\n\nwh_heatmap &lt;- heatmap(wh_matrix,\n                      scale=\"column\",\n                      cexRow = 0.6, \n                      cexCol = 0.8,\n                      margins = c(10, 4))"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#creating-interactive-heatmap",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#creating-interactive-heatmap",
+    "title": "Hands-on_Exercise 5",
+    "section": "14.5 Creating Interactive Heatmap",
+    "text": "14.5 Creating Interactive Heatmap\n\n14.5.1 Working with heatmaply\n\nheatmaply(mtcars)\n\n\n\n\n\n\nheatmaply(wh_matrix[, -c(1, 2, 4, 5)])\n\n\n\n\n\n\n\n14.5.2 Data trasformation\n\nheatmaply(wh_matrix[, -c(1, 2, 4, 5)],\n          scale = \"column\")\n\n\n\n\n\n\n14.5.2.2 Normalising method\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]))\n\n\n\n\n\n\n\n14.5.2.3 Percentising method\n\nheatmaply(percentize(wh_matrix[, -c(1, 2, 4, 5)]))\n\n\n\n\n\n\n\n\n14.5.3 Clustering algorithm\n\n\n14.5.4 Manual approach\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          dist_method = \"euclidean\",\n          hclust_method = \"ward.D\")\n\n\n\n\n\n\n\n14.5.5 Statistical approach\n\nwh_d &lt;- dist(normalize(wh_matrix[, -c(1, 2, 4, 5)]), method = \"euclidean\")\ndend_expend(wh_d)[[3]]\n\n  dist_methods hclust_methods     optim\n1      unknown         ward.D 0.6137851\n2      unknown        ward.D2 0.6289186\n3      unknown         single 0.4774362\n4      unknown       complete 0.6434009\n5      unknown        average 0.6701688\n6      unknown       mcquitty 0.5020102\n7      unknown         median 0.5901833\n8      unknown       centroid 0.6338734\n\n\n\nwh_clust &lt;- hclust(wh_d, method = \"average\")\nnum_k &lt;- find_k(wh_clust)\nplot(num_k)\n\n\n\n\n\n\n\n\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          dist_method = \"euclidean\",\n          hclust_method = \"average\",\n          k_row = 3)\n\n\n\n\n\n\n\n14.5.6 Seriation\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          seriate = \"OLO\")\n\n\n\n\n\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          seriate = \"GW\")\n\n\n\n\n\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          seriate = \"mean\")\n\n\n\n\n\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          seriate = \"none\")\n\n\n\n\n\n\n\n14.5.7 Working with colour palettes\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          seriate = \"none\",\n          colors = Blues)\n\n\n\n\n\n\n\n14.5.8 The finishing touch\n\nheatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),\n          Colv=NA,\n          seriate = \"none\",\n          colors = Blues,\n          k_row = 5,\n          margins = c(NA,200,60,NA),\n          fontsize_row = 4,\n          fontsize_col = 5,\n          main=\"World Happiness Score and Variables by Country, 2018 \\nDataTransformation using Normalise Method\",\n          xlab = \"World Happiness Indicators\",\n          ylab = \"World Countries\"\n          )"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#installing-and-launching-r-packages-3",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#installing-and-launching-r-packages-3",
+    "title": "Hands-on_Exercise 5",
+    "section": "15.2 Installing and Launching R Packages",
+    "text": "15.2 Installing and Launching R Packages\n\npacman::p_load(GGally, parallelPlot, tidyverse)\n\npackage 'parallelPlot' successfully unpacked and MD5 sums checked\n\nThe downloaded binary packages are in\n    C:\\Users\\rbu93\\AppData\\Local\\Temp\\RtmpkJEhOB\\downloaded_packages"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#data-preparation-1",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#data-preparation-1",
+    "title": "Hands-on_Exercise 5",
+    "section": "15.3 Data Preparation",
+    "text": "15.3 Data Preparation\n\nwh &lt;- read_csv(\"data/WHData-2018.csv\")"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#plotting-static-parallel-coordinates-plot",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#plotting-static-parallel-coordinates-plot",
+    "title": "Hands-on_Exercise 5",
+    "section": "15.4 Plotting Static Parallel Coordinates Plot",
+    "text": "15.4 Plotting Static Parallel Coordinates Plot\n\n15.4.1 Plotting a simple parallel coordinates\n\nggparcoord(data = wh, \n           columns = c(7:12))\n\n\n\n\n\n\n\n\n\n\n15.4.2 Plotting a parallel coordinates with boxplot\n\nggparcoord(data = wh, \n           columns = c(7:12), \n           groupColumn = 2,\n           scale = \"uniminmax\",\n           alphaLines = 0.2,\n           boxplot = TRUE, \n           title = \"Parallel Coordinates Plot of World Happines Variables\")\n\n\n\n\n\n\n\n\n\n\n15.4.3 Parallel coordinates with facet\n\nggparcoord(data = wh, \n           columns = c(7:12), \n           groupColumn = 2,\n           scale = \"uniminmax\",\n           alphaLines = 0.2,\n           boxplot = TRUE, \n           title = \"Multiple Parallel Coordinates Plots of World Happines Variables by Region\") +\n  facet_wrap(~ Region)\n\n\n\n\n\n\n\n\n\n\n15.4.4 Rotating x-axis text label\n\nggparcoord(data = wh, \n           columns = c(7:12), \n           groupColumn = 2,\n           scale = \"uniminmax\",\n           alphaLines = 0.2,\n           boxplot = TRUE, \n           title = \"Multiple Parallel Coordinates Plots of World Happines Variables by Region\") +\n  facet_wrap(~ Region) + \n  theme(axis.text.x = element_text(angle = 30))\n\n\n\n\n\n\n\n\n\n\n15.4.5 Adjusting the rotated x-axis text label\n\nggparcoord(data = wh, \n           columns = c(7:12), \n           groupColumn = 2,\n           scale = \"uniminmax\",\n           alphaLines = 0.2,\n           boxplot = TRUE, \n           title = \"Multiple Parallel Coordinates Plots of World Happines Variables by Region\") +\n  facet_wrap(~ Region) + \n  theme(axis.text.x = element_text(angle = 30, hjust=1))"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#plotting-interactive-parallel-coordinates-plot-parallelplot-methods",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#plotting-interactive-parallel-coordinates-plot-parallelplot-methods",
+    "title": "Hands-on_Exercise 5",
+    "section": "15.5 Plotting Interactive Parallel Coordinates Plot: parallelPlot methods",
+    "text": "15.5 Plotting Interactive Parallel Coordinates Plot: parallelPlot methods\n\n15.5.1 The basic plot\n\nwh &lt;- wh %&gt;%\n  select(\"Happiness score\", c(7:12))\nparallelPlot(wh,\n             width = 320,\n             height = 250)\n\n\n\n\n\n\n\n15.5.2 Rotate axis label\n\nparallelPlot(wh,\n             rotateTitle = TRUE)\n\n\n\n\n\n\n\n15.5.3 Changing the colour scheme\n\nparallelPlot(wh,\n             continuousCS = \"YlOrRd\",\n             rotateTitle = TRUE)\n\n\n\n\n\n\n\n15.5.4 Parallel coordinates plot with histogram\n\nhistoVisibility &lt;- rep(TRUE, ncol(wh))\nparallelPlot(wh,\n             rotateTitle = TRUE,\n             histoVisibility = histoVisibility)"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#installing-and-launching-r-packages-4",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#installing-and-launching-r-packages-4",
+    "title": "Hands-on_Exercise 5",
+    "section": "16.2 Installing and Launching R Packages",
+    "text": "16.2 Installing and Launching R Packages\n\npacman::p_load(treemap, treemapify, tidyverse) \n\n\n16.3.1 Importing the data set\n\nrealis2018 &lt;- read_csv(\"data/realis2018.csv\")\n\n\n\n16.3.2 Data Wrangling and Manipulation\n\n\n16.3.3 Grouped summaries without the Pipe\n\nrealis2018_grouped &lt;- group_by(realis2018, `Project Name`,\n                               `Planning Region`, `Planning Area`, \n                               `Property Type`, `Type of Sale`)\nrealis2018_summarised &lt;- summarise(realis2018_grouped, \n                          `Total Unit Sold` = sum(`No. of Units`, na.rm = TRUE),\n                          `Total Area` = sum(`Area (sqm)`, na.rm = TRUE),\n                          `Median Unit Price ($ psm)` = median(`Unit Price ($ psm)`, na.rm = TRUE), \n                          `Median Transacted Price` = median(`Transacted Price ($)`, na.rm = TRUE))\n\n\n\n16.3.4 Grouped summaries with the pipe\n\nrealis2018_summarised &lt;- realis2018 %&gt;% \n  group_by(`Project Name`,`Planning Region`, \n           `Planning Area`, `Property Type`, \n           `Type of Sale`) %&gt;%\n  summarise(`Total Unit Sold` = sum(`No. of Units`, na.rm = TRUE), \n            `Total Area` = sum(`Area (sqm)`, na.rm = TRUE),\n            `Median Unit Price ($ psm)` = median(`Unit Price ($ psm)`, na.rm = TRUE),\n            `Median Transacted Price` = median(`Transacted Price ($)`, na.rm = TRUE))"
+  },
+  {
+    "objectID": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#designing-treemap-with-treemap-package",
+    "href": "Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html#designing-treemap-with-treemap-package",
+    "title": "Hands-on_Exercise 5",
+    "section": "16.4 Designing Treemap with treemap Package",
+    "text": "16.4 Designing Treemap with treemap Package"
   }
 ]
