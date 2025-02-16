@@ -1,6 +1,641 @@
 ---
 title: "Take-home Exercise 1"
 author: "Priya"
-date: "February 1,2025"
+date: "February 1, 2025"
 date-modified: "last-modified"
+execute:
+  echo: true
+  eval: true
+  warning: false
+  freeze: true
+format:
+  html:
+    theme: lilac
+    toc: true
+    toc-depth: 2
+    code-fold: show
+    highlight-style: breezedark
 ---
+
+## 1.Overview
+
+### 1.1 Background and Motivation
+
+Ship performance is an essential factor in maritime operations, influencing fuel efficiency, speed, and cargo transport efficiency. This study aims to analyze ship performance data, cluster ships based on operational characteristics, and identify key patterns affecting ship efficiency.
+
+Maritime transport is the backbone of global trade, playing a crucial role in economic growth and sustainability. Efficient ship operations, fuel optimization, and cost management are key concerns for industry stakeholders. By analyzing ship performance data, we can uncover trends, improve decision-making, and explore solutions to reduce environmental impact.
+
+### 1.2 The Data
+
+The data set for this exercise is **Ship Performance Clustering** retrieved from [Kaggle](https://www.kaggle.com/datasets/jeleeladekunlefijabi/ship-performance-clustering-dataset?resource=download) which contains attributes, including:
+
+**Numerical Features:**
+
+-   **Speed_Over_Ground_knots:** Average speed of the ship over water (in knots).
+
+-   **Engine_Power_kW:** Engine power output (in kilowatts).
+
+-   **Distance_Traveled_nm:** Total distance traveled by the ship (in nautical miles).
+
+-   **Operational_Cost_USD:** Total operational cost per voyage (in USD).
+
+-   **Revenue_per_Voyage_USD:** Revenue generated per voyage (in USD).
+
+-   **Efficiency_nm_per_kWh:** Energy efficiency calculated in nautical miles per kilowatt-hour.
+
+**Categorical Features:**
+
+-   **Ship_Type:** Type of ship (e.g., Tanker, Container Ship, Fish Carrier, Bulk Carrier).
+
+-   **Route_Type:** Shipping route type (e.g., Short-haul, Long-haul, Transoceanic).
+
+-   **Engine_Type:** Type of engine (e.g., Diesel, Heavy Fuel Oil).
+
+-   **Maintenance_Status:** Maintenance condition of the ship (e.g., Fair, Critical, Good).
+
+-   **Weather_Condition:** Prevailing weather conditions during voyages (e.g., Calm, Moderate, Rough).
+
+```{r}
+data_path <- "data/Ship_Performance_Dataset.csv" 
+df <- read.csv(data_path, stringsAsFactors = FALSE)
+```
+
+### 1.3 The Task
+
+The objective of this analysis is to pre-process the data set, conduct Exploratory Data Analysis (EDA) and perform clustering to identify groups of ships with similar performance.
+
+## 2. Loading Packages
+
+| Description | Library |
+|------------------------------------|------------------------------------|
+| Core (Data & Visualization) | [tidyverse](https://www.tidyverse.org/) , [ggplot2](https://ggplot2.tidyverse.org/) , [ggrepel](https://cran.r-project.org/web/packages/ggrepel/vignettes/ggrepel.html) , [patchwork](https://patchwork.data-imaginist.com/) |
+| Styling & Themes | [ggthemes](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/) , [hrbrthemes](https://rdrr.io/cran/hrbrthemes/) |
+| Interactivity | [ggiraph](https://davidgohel.github.io/ggiraph/) , [plotly](https://plotly.com/r/) , [DT](https://rstudio.github.io/DT/) |
+| Statistical & Model Insights | [ggdist](https://mjskay.github.io/ggdist/) , [ggridges](https://cran.r-project.org/web/packages/ggridges/vignettes/introduction.html) , [ggstatsplot](https://indrajeetpatil.github.io/ggstatsplot/) , [performance](https://easystats.github.io/performance/) , [see](https://cran.r-project.org/web/packages/see/index.html) |
+| Exploratory & Clustering | [corrplot](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html) , [heatmaply](https://cran.r-project.org/web/packages/heatmaply/vignettes/heatmaply.html) , [GGally](https://cran.r-project.org/web/packages/GGally/index.html) |
+| Hierarchical Analysis | [treemap](https://rpubs.com/brandonkopp/creating-a-treemap-in-r) , [treemapify](https://cran.r-project.org/web/packages/treemapify/vignettes/introduction-to-treemapify.html) |
+
+Let us install the above packages using [Pacman](https://rpubs.com/akshaypatankar/594834).The pacman package is used to load required libraries without the need of being sure of having that particular package installed. The functions in this package are easier to use than their equivalent base functions. Coding time required is significantly reduced because of this package.
+
+```{r}
+pacman::p_load(tidyverse, ggplot2, ggrepel, patchwork,ggthemes, hrbrthemes,
+			   ggiraph, plotly, DT,ggdist, ggridges, ggstatsplot, 
+			   performance, see,corrplot, heatmaply, GGally,treemap, treemapify, skimr , dplyr)
+```
+
+## 3. Ship Performance Data
+
+The **Ship Performance Data set** contains **2736 observations and 18 variables**, capturing key operational metrics of various ship types in the Gulf of Guinea.
+
+```{r}
+# Structure of data
+glimpse(df)
+
+```
+
+```{r}
+# Summary of data
+skim(df)
+```
+
+```{r}
+# Interactive dataset view
+datatable(df, options = list(scrollX = TRUE, pageLength = 10))
+```
+
+```{r}
+#Check for duplicates
+df[duplicated(df),]
+```
+
+## 4. Data Wrangling
+
+The following flowchart shows the main variables used and created in this study.
+
+![](Pictures/ship_performance_pastel_v2_flowchart.png)
+
+### 4.1 Variable Selection
+
+We focus on selecting relevant variables that directly influence ship performance:
+
+```{r}
+ggstatsplot::ggcorrmat(
+  data = df, 
+  cor.vars = which(sapply(df, is.numeric)),  # Automatically detect numerical columns
+  colors = c("red", "white", "blue"),  # Move colors OUTSIDE ggcorrplot.args
+  ggcorrplot.args = list(outline.color = "black", 
+                         hc.order = TRUE,
+                         tl.cex = 10),
+  title    = "Correlogram for Ship Performance Dataset",
+  subtitle = "Showing significant correlations (p < 0.05)"
+)
+
+
+
+```
+
+Based on correlations and domain relevance, the key numerical variables are:
+
+✅ Speed Over Ground (knots) →Determines fuel efficiency and travel time.\
+✅ Distance_Traveled_nm → Affects cost and fuel efficiency.\
+✅ Operational_Cost_USD → Directly impacts business profitability.\
+✅ Efficiency_nm_per_kWh → Core metric for ship fuel efficiency analysis.\
+✅ Engine_Power_kW → Impacts voyage frequency and fuel use.\
+✅ Cargo_Weight_tons → Affects speed and efficiency.\
+
+```{r}
+library(dplyr)  # Load dplyr to use %>%
+df_selected <- df %>%
+  select(Speed_Over_Ground_knots, Engine_Power_kW, Cargo_Weight_tons, 
+         Efficiency_nm_per_kWh, Operational_Cost_USD, Distance_Traveled_nm)
+
+```
+
+### 4.2 Handling Missing Values
+
+We know that there are no missing values.
+
+```{r}
+# Check missing values
+colSums(is.na(df))
+```
+
+### 4.3 Categorical Variable selection
+
+```{r}
+  # If not installed
+library(car)
+
+# Perform ANOVA for categorical variables on Efficiency
+anova_efficiency <- list()
+
+for (cat_var in c("Ship_Type", "Route_Type", "Engine_Type", "Maintenance_Status", "Weather_Condition")) {
+  formula <- as.formula(paste("Efficiency_nm_per_kWh ~", cat_var))
+  model <- aov(formula, data = df)
+  anova_efficiency[[cat_var]] <- summary(model)
+}
+
+# Display ANOVA results
+anova_efficiency
+
+# Perform ANOVA for categorical variables on Operational Cost
+anova_cost <- list()
+
+for (cat_var in c("Ship_Type", "Route_Type", "Engine_Type", "Maintenance_Status", "Weather_Condition")) {
+  formula <- as.formula(paste("Operational_Cost_USD ~", cat_var))
+  model <- aov(formula, data = df)
+  anova_cost[[cat_var]] <- summary(model)
+}
+
+# Display ANOVA results
+anova_cost
+
+
+```
+
+The ANOVA results show that **Engine Type** significantly impacts **ship efficiency (`Efficiency_nm_per_kWh`)** (**p = 0.0274**), while **Weather Condition** is borderline significant (**p = 0.0676**). **Ship Type, Route Type, and Maintenance Status** do not show a strong influence.
+
+For **operational cost (`Operational_Cost_USD`)**, no categorical variables are significant (**p \> 0.20**), suggesting that costs are driven by numerical factors like **distance traveled, cargo weight, and fuel consumption**.
+
+Thus, **Engine Type** is the most important categorical variable for ship efficiency, while operational cost analysis should focus on numerical variables.
+
+## 5. Univariate Analysis
+
+```{r}
+summary(df_selected)
+summary(df_selected$Fuel_Consumption)
+```
+
+### 5.1 Speed Distribution
+
+```{r}
+# Select numerical and categorical variables
+numerical_vars <- c("Speed_Over_Ground_knots", "Engine_Power_kW", "Cargo_Weight_tons", 
+                    "Efficiency_nm_per_kWh", "Operational_Cost_USD", "Distance_Traveled_nm")
+
+categorical_vars <- c("Ship_Type", "Route_Type", "Engine_Type", "Maintenance_Status", "Weather_Condition")
+
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 10
+
+# Load libraries
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# Convert numerical variables into long format
+df_long <- df %>%
+  select(Speed_Over_Ground_knots, Engine_Power_kW, Cargo_Weight_tons, 
+         Efficiency_nm_per_kWh, Operational_Cost_USD, Distance_Traveled_nm) %>%
+  pivot_longer(cols = everything(), names_to = "Variable", values_to = "Value")
+
+# Apply log transformation where necessary to handle large scale differences
+df_long <- df_long %>%
+  mutate(Value = ifelse(Variable %in% c("Operational_Cost_USD", "Efficiency_nm_per_kWh"),
+                        log10(Value + 1), Value))  # log10 transformation to prevent log(0)
+
+# Create a 3x3 grid layout for histograms
+ggplot(df_long, aes(x = Value)) +
+  geom_histogram(aes(y = ..count..), fill = "pink", color = "black", alpha = 0.7, bins = 30) +
+  geom_density(aes(y = ..density.. * max(..count..)), color = "red", size = 1) +  # Scale KDE curve properly
+  facet_wrap(~Variable, scales = "free", ncol = 3, nrow = 3) +  # 3x3 layout
+  labs(title = "Distribution of Numerical Variables", x = "Values", y = "Count") +
+  theme_minimal()
+
+
+```
+
+Insights:\
+1️⃣ **Engine Power (kW) & Cargo Weight (tons)** show **uniform distributions**, suggesting **varied ship types with no dominant power range**.\
+2️⃣ **Operational Cost (USD) & Efficiency (nm per kWh)** required **log transformation** due to **high variance and extreme values**.\
+3️⃣ **Speed Over Ground (knots)** has a **bimodal distribution**, indicating two distinct speed categories among ships.\
+4️⃣ **Distance Traveled (nm)** appears **evenly spread**, suggesting **diverse voyage lengths** rather than a common range.
+
+### 5.2 Fuel Consumption
+
+```{r}
+
+#| fig-width: 12
+#| fig-height: 10
+
+library(ggplot2)
+library(dplyr)
+library(tidyr)  # For pivot_longer
+
+# Convert categorical variables into long format
+df_long <- df %>%
+  select(Ship_Type, Route_Type, Engine_Type, Maintenance_Status, Weather_Condition) %>%
+  pivot_longer(cols = everything(), names_to = "Category", values_to = "Value")
+
+# Create horizontal bar charts
+ggplot(df_long, aes(y = Value, fill = Category)) +
+  geom_bar(color = "black", fill = "lightblue") +  # Light blue bars with black outline
+  facet_wrap(~Category, scales = "free_y") +  # Facet by category
+  labs(title = "Categorical Variable Distributions", x = "Count", y = "Categories") +
+  theme_minimal() + 
+  theme(axis.text.y = element_text(size = 10))  # Adjust label size for readability
+
+
+
+
+```
+
+Insights:
+
+1️⃣ **Diesel and Heavy Fuel Oil (HFO) are the dominant engine types**, while **Steam Turbine is less common**.\
+2️⃣ **Most ships are in Good or Fair maintenance condition**, with **fewer classified as Critical**.\
+3️⃣ **Long-haul and Coastal routes are the most frequent**, suggesting significant international and regional shipping activity.\
+4️⃣ **Bulk Carriers and Container Ships are the most common ship types**, while **Tankers and Fish Carriers are less frequent**.\
+5️⃣ **Calm and Moderate weather conditions are predominant**, indicating generally favorable sailing conditions.
+
+## 6. Exploratory Data Analysis
+
+### 6.1 Distribution of Key Numerical Variables Across Ship Types
+
+```{r}
+#| fig-width: 12
+#| fig-height: 10
+
+# Load libraries
+library(ggplot2)
+library(ggridges)
+library(viridis)
+library(patchwork)
+library(dplyr)
+
+# Convert ship performance data into long format
+df_long <- df %>%
+  select(Ship_Type, Speed_Over_Ground_knots, Efficiency_nm_per_kWh, 
+         Operational_Cost_USD, Distance_Traveled_nm) %>%
+  pivot_longer(cols = -Ship_Type, names_to = "Metric", values_to = "Value")
+
+# Create Ridge Plot with Y-axis starting from 0
+ridgeplot_performance <- ggplot(df_long, aes(x = Value, y = Ship_Type, 
+                                             fill = 0.5 - abs(0.5 - stat(ecdf)))) +
+  stat_density_ridges(geom = "density_ridges_gradient", calc_ecdf = TRUE, scale = 1.2, rel_min_height = 0.01) +
+  scale_fill_viridis_c(name = "Tail probability", direction = -1) +
+  labs(title = "                         Ship Performance: Speed, Efficiency, Cost, and Distance", hjust = 0.5,
+       subtitle = "Density plots of key performance metrics stratified by Ship Type",
+       x = "Performance Metrics") +
+  facet_wrap(~Metric, scales = "free_x") +  # Facet by performance variable
+  scale_y_discrete(expand = c(0, 0)) +  # Ensures y-axis starts at 0
+  theme_minimal() +
+  theme(legend.position = "none", 
+        plot.title = element_text(face = "bold", size = 20),
+        plot.subtitle = element_text(size = 18),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 14),
+        axis.title.y = element_blank(),
+        axis.title.x = element_text(size = 14, face = "bold"))
+
+# Display the final plot
+ridgeplot_performance
+
+```
+
+Insights:
+
+-   **Container Ships & Bulk Carriers** are **faster, more efficient, and travel longer distances**, but **incur higher operational costs**.
+
+-   **Fish Carriers & Tankers** tend to operate **at lower speeds, over shorter routes, and with more stable costs**.
+
+-   **The ridge plot highlights clear operational differences in efficiency and cost structure across ship types**.
+
+### 6.2 Relationship Between Engine Type and Fuel Efficiency
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+# Load libraries
+library(ggplot2)
+library(RColorBrewer)
+
+# Define pastel colors
+pastel_colors <- brewer.pal(n = 5, name = "Pastel1")  # Adjust for number of engine types
+
+# Boxplot with detailed statistics
+ggplot(df, aes(x = Engine_Type, y = Efficiency_nm_per_kWh, fill = Engine_Type)) +
+  geom_boxplot(alpha = 0.8, outlier.color = "red", outlier.shape = 16, outlier.size = 3) +  # Outliers in red
+  stat_summary(fun = mean, geom = "point", shape = 23, size = 4, fill = "black", color = "white") +  # Mean as white point
+  scale_fill_manual(values = pastel_colors) +  # Use pastel colors
+  labs(title = "Engine Type vs Fuel Efficiency",
+       subtitle = "Boxplot with Mean, Outliers, and Quartiles",
+       x = "Engine Type", y = "Efficiency (nm per kWh)") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold", size = 16),
+        plot.subtitle = element_text(size = 14),
+        axis.text.x = element_text(size = 12, angle = 30, hjust = 1),  # Rotate x labels for better readability
+        axis.text.y = element_text(size = 12))
+
+
+```
+
+Insights:
+
+-   **Diesel and HFO engines are generally more efficient and consistent.**
+
+-   **Steam Turbines have a highly variable efficiency range**, making them **less predictable**.
+
+-   **Outliers in efficiency suggest some ships are operating under unique conditions** (e.g., heavier loads, different fuel quality, or aging machinery).
+
+### 6.3 Violin Plot: Route Type vs Distance Traveled (nm)
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+ggplot(df, aes(x = Route_Type, y = Distance_Traveled_nm, fill = Route_Type)) +
+  geom_violin(alpha = 0.6) +
+  geom_boxplot(width = 0.1, outlier.shape = NA, alpha = 0.5) +  # Add boxplot inside violin for clarity
+  scale_fill_manual(values = pastel_colors) +
+  labs(title = "Distribution of Distance Traveled by Route Type",
+       subtitle = "Violin plot showing spread of voyage distances",
+       x = "Route Type", y = "Distance Traveled (nm)") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold", size = 16),
+        plot.subtitle = element_text(size = 14),
+        axis.text.x = element_text(size = 12, angle = 30, hjust = 1),
+        axis.text.y = element_text(size = 12))
+
+
+```
+
+Insights:
+
+**Transoceanic routes** handle **the longest and most variable voyages**, likely for global shipping networks.\
+**Long-haul voyages** are long but **more standardized** than transoceanic trips.\
+**Short-haul & coastal routes** are **shorter and more predictable**, indicating **regional transport usage**.
+
+## 7. Clustering Analysis
+
+### 7.1 Standardizing Data
+
+```{r}
+# Select numerical features for clustering
+df_cluster <- df %>%
+  select(Speed_Over_Ground_knots, Engine_Power_kW, Cargo_Weight_tons, 
+         Efficiency_nm_per_kWh, Operational_Cost_USD, Distance_Traveled_nm) %>%
+  na.omit()  # Remove missing values
+
+```
+
+### 7.2 Normalize Data for Better Clustering
+
+```{r}
+# Install required package if not installed
+install.packages("scales", repos = "https://cloud.r-project.org/")
+library(scales)
+
+
+
+# Normalize data
+df_scaled <- as.data.frame(scale(df_cluster))
+
+```
+
+### 7.3 Determine Optimal Number of Clusters
+```{r}
+# Set a CRAN mirror before installing
+chooseCRANmirror(graphics = FALSE, ind = 1)
+
+# Install packages again
+install.packages("NbClust", dependencies = TRUE)
+install.packages("factoextra", dependencies = TRUE)
+
+```
+
+
+```{r}
+# Load libraries
+library(factoextra)
+library(NbClust)
+
+# Elbow Method
+fviz_nbclust(df_scaled, kmeans, method = "wss") +
+  labs(title = "Elbow Method for Optimal K")
+
+# Silhouette Method
+fviz_nbclust(df_scaled, kmeans, method = "silhouette") +
+  labs(title = "Silhouette Method for Optimal K")
+
+```
+
+### 7.4 Perform K-Means Clustering 
+
+```{r}
+# Set optimal number of clusters (from Elbow & Silhouette methods)
+k_optimal <- 3
+
+# Run K-Means
+set.seed(123)  # Ensure reproducibility
+kmeans_model <- kmeans(df_scaled, centers = k_optimal, nstart = 25)
+
+# Add cluster labels to the original dataset
+df$Cluster <- as.factor(kmeans_model$cluster)
+
+```
+
+### 7.5 Visualize Clusters
+
+```{r}
+# Install required package
+install.packages("ggfortify")
+
+# Load library
+library(ggfortify)
+
+# Plot PCA with clusters
+autoplot(prcomp(df_scaled), data = df, colour = "Cluster", shape = "Cluster", frame = TRUE) +
+  labs(title = "PCA Plot of Clusters") +
+  theme_minimal()
+
+```
+
+```{r}
+
+#| fig-width: 12
+#| fig-height: 8
+
+# Load libraries
+library(ggplot2)
+library(RColorBrewer)
+
+# Define pastel colors
+pastel_colors <- brewer.pal(n = 5, name = "Pastel1")  # Adjust for number of clusters
+
+# Boxplot with pastel colors
+ggplot(df, aes(x = Cluster, y = Efficiency_nm_per_kWh, fill = Cluster)) +
+  geom_boxplot(alpha = 0.8, outlier.color = "red", outlier.shape = 16, outlier.size = 3) +  # Outliers in red
+  scale_fill_manual(values = pastel_colors) +  # Use pastel colors
+  labs(title = "Fuel Efficiency Across Clusters",
+       x = "Cluster", y = "Efficiency (nm per kWh)") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold", size = 16),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12))
+
+
+```
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+# Bar plot with pastel colors
+ggplot(df, aes(x = Ship_Type, fill = Cluster)) +
+  geom_bar(position = "dodge") +
+  scale_fill_manual(values = pastel_colors) +  # Apply pastel colors
+  labs(title = "Ship Type Distribution Across Clusters",
+       x = "Ship Type", y = "Count") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", size = 16),
+        axis.text.x = element_text(size = 12, angle = 30, hjust = 1),
+        axis.text.y = element_text(size = 12))
+
+
+```
+
+Insights:
+
+After running K-means, clusters may represent:
+
+-   **Cluster 1:** High-speed, low-cost, high-efficiency ships (e.g., Container Ships).
+
+-   **Cluster 2:** Heavy cargo ships with moderate speeds and higher fuel costs (e.g., Bulk Carriers).
+
+-   **Cluster 3:** Slow-speed, long-distance tankers with high operational costs (e.g., Oil Tankers).
+
+## 8. Tree map
+
+8.1 Treemap: Ship Type & Route Type
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+
+# Load libraries
+library(treemap)
+library(RColorBrewer)
+library(dplyr)
+
+# Summarize data to aggregate continuous variables for each category
+treemap_data <- df %>%
+  group_by(Route_Type, Ship_Type) %>%
+  summarise(Total_Distance = sum(Distance_Traveled_nm, na.rm = TRUE), 
+            Avg_Efficiency = mean(Efficiency_nm_per_kWh, na.rm = TRUE)) %>%
+  ungroup()
+
+# Define pastel color palette
+pastel_palette <- brewer.pal(n = 9, name = "Pastel2")  
+
+# Create treemap with Efficiency as color and Distance as size
+treemap(treemap_data,
+        index = c("Route_Type", "Ship_Type"),  # Hierarchical categories
+        vSize = "Total_Distance",  # Size = Total Distance
+        vColor = "Avg_Efficiency",  # Color = Average Efficiency
+        type = "value",  # Uses continuous variable for color
+        title = "Ship Type & Route Type Treemap (Efficiency & Distance)",
+        palette = pastel_palette,  # Apply pastel color scale
+        border.col = "white")
+
+
+```
+
+Insights:
+
+**Ship Type & Route Type** → **Long-haul & transoceanic ships cover the most distance but vary in efficiency**
+
+8.2 Treemap: Ship Type & Route Type
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+# Summarize data for Engine Type & Ship Type
+treemap_data_engine <- df %>%
+  group_by(Engine_Type, Ship_Type) %>%
+  summarise(Total_Cargo = sum(Cargo_Weight_tons, na.rm = TRUE), 
+            Avg_Cost = mean(Operational_Cost_USD, na.rm = TRUE)) %>%
+  ungroup()
+
+# Define pastel color palette
+pastel_palette_cost <- brewer.pal(n = 9, name = "Pastel1")  
+
+# Create treemap with Operational Cost as color and Cargo Weight as size
+treemap(treemap_data_engine,
+        index = c("Engine_Type", "Ship_Type"),  # Hierarchical categories
+        vSize = "Total_Cargo",  # Size = Total Cargo
+        vColor = "Avg_Cost",  # Color = Average Operational Cost
+        type = "value",  # Uses continuous variable for color
+        title = "Engine Type & Ship Type Treemap (Cost & Cargo)",
+        palette = pastel_palette_cost,  # Apply pastel color scale
+        border.col = "white")
+
+```
+
+Insights:
+
+**Engine Type & Ship Type** → **Diesel engines are cost-effective, while Steam Turbines are expensive but still in use for heavy operations**.
+
+## 9. Summary and Conclusion
+
+This analysis looked at key factors influencing ship performance, focusing on efficiency, speed, operational cost, and voyage distance. Using EDA, clustering, and treemaps, we identified meaningful patterns across different ship types, engine types, and route types.
+
+-   **Bulk Carriers and Container Ships** handle the longest routes but show varying efficiency levels. Short-haul and coastal ships, while covering shorter distances, tend to be more fuel-efficient.
+
+-   **Diesel engines** are widely used and provide better cost efficiency compared to **Steam Turbines**, which have significantly higher operational costs.
+
+-   **Clustering grouped ships based on efficiency, revealing performance differences across ship types and operational characteristics.** Some clusters showed cost-effective ships, while others highlighted high-cost, low-efficiency operations.
+
+## 10. References and Inspiration
+
+-   <https://isss608-ay2024-25jan.netlify.app/>
+-   <https://clauswilke.com/dataviz/>

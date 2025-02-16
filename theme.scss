@@ -1,0 +1,130 @@
+/* Custom Lilac-Themed SCSS */
+
+/*-- scss:functions --*/
+
+/*-- scss:defaults --*/
+
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
+
+// Colors
+$bg: #FFFFFF;
+$lilac-light: #DCCFE3;
+$lilac-dark: #A78BBE;
+$soft-purple: #C8A4D4;
+$deep-purple: #6B4E7C;
+$white: #FFFFFF;
+$highlight: #B58392;
+
+// Base document colors
+$navbar-bg: $bg;
+$navbar-fg: $deep-purple;
+$navbar-hl: $highlight;
+$body-bg: $bg;
+$body-color: $deep-purple;
+$footer-bg: $bg;
+$link-color: $highlight;
+
+// Code blocks
+$code-block-bg: $white;
+
+// Fonts
+$font-family: 'Ubuntu', sans-serif;
+
+// Table of contents
+$toc-font-size: 12px;
+$toc-active-border: $highlight;
+
+// Titles
+.title {
+  margin-bottom: 1.5em;
+  font-size: 36px;
+  font-family: $font-family;
+  font-weight: 600;
+  color: $deep-purple;
+}
+
+.subtitle {
+  font-size: 18px;
+  font-family: $font-family;
+  font-style: italic;
+  color: $deep-purple;
+}
+
+body {
+  font-size: 12px;
+  font-family: $font-family;
+  background-color: $bg;
+  background-position: center top;
+  background-size: 100% auto;
+  background-attachment: scroll;
+  background-repeat: no-repeat;
+}
+
+// Headers
+h1 {
+  font-size: 26px;
+  font-family: $font-family;
+  font-weight: 600;
+  color: $deep-purple;
+}
+
+h2 {
+  font-size: 22px;
+  font-family: $font-family;
+  font-weight: 500;
+  color: $deep-purple;
+}
+
+h3 {
+  font-size: 18px;
+  font-family: $font-family;
+  font-weight: 500;
+}
+
+h4 {
+  font-size: 16px;
+  font-family: $font-family;
+  font-style: italic;
+  font-weight: 500;
+}
+
+// Text alignment
+.left {
+  text-align: left;
+  padding-left: 1em;
+}
+
+.right {
+  text-align: right;
+  padding-right: 1em;
+}
+
+// Navbar
+.navbar {
+  border-width: 0;
+  background-color: #E6DFF0!important;
+  border-style: solid;
+  border-color: $deep-purple;
+  height: 45px;
+  font-size: 12px;
+}
+
+.dropdown-menu .dropdown-item {
+  background-color: $bg;
+  font-size: 12px;
+}
+
+.dropdown-menu a {
+  color: $highlight;
+  background-color: $bg;
+}
+
+.callout.callout-style-default .callout-body {
+  font-size: 0.75rem;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

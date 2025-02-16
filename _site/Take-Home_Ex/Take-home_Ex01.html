@@ -22,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -108,8 +142,16 @@ ul.task-list li input[type="checkbox"] {
  <span class="dropdown-text">Hands-on Exercise 2</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex03.html">
+    <a class="dropdown-item" href="../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html">
  <span class="dropdown-text">Hands-on Exercise 3</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html">
+ <span class="dropdown-text">Hands-on Exercise 4</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html">
+ <span class="dropdown-text">Hands-on Exercise 5</span></a>
   </li>  
     </ul>
   </li>
@@ -121,6 +163,14 @@ ul.task-list li input[type="checkbox"] {
         <li>
     <a class="dropdown-item" href="../In-class_Ex1.html">
  <span class="dropdown-text">In-class Exercise 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../In-Class_Ex/In-Class_Ex04/In_Class_Ex04.html">
+ <span class="dropdown-text">In-Class Exercise 4</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../In-Class_Ex/In-Class_Ex05/In_Class_Ex05.html">
+ <span class="dropdown-text">In-Class Exercise 5</span></a>
   </li>  
     </ul>
   </li>
@@ -156,8 +206,20 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#load-data" id="toc-load-data" class="nav-link active" data-scroll-target="#load-data">Load Data</a></li>
+  <li><a href="#data-cleaning" id="toc-data-cleaning" class="nav-link" data-scroll-target="#data-cleaning">Data Cleaning</a></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">Exploratory Data Analysis</a></li>
+  <li><a href="#distribution-of-ship-speeds" id="toc-distribution-of-ship-speeds" class="nav-link" data-scroll-target="#distribution-of-ship-speeds">Distribution of Ship Speeds</a></li>
+  <li><a href="#fuel-consumption-vs-speed" id="toc-fuel-consumption-vs-speed" class="nav-link" data-scroll-target="#fuel-consumption-vs-speed">Fuel Consumption vs Speed</a></li>
+  <li><a href="#efficiency-analysis" id="toc-efficiency-analysis" class="nav-link" data-scroll-target="#efficiency-analysis">Efficiency Analysis</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -188,7 +250,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">February 1, 2025</p>
+      <p class="date-modified">February 16, 2025</p>
     </div>
   </div>
     
@@ -199,8 +261,174 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p>Ship Performance Analysis</p>
+<section id="load-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-data">Load Data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the ship performance dataset</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"Take-home_Ex01/data/Ship_Performance_Dataset.csv"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Display structure of the dataset</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>spc_tbl_ [2,736 × 18] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ Date                   : Date[1:2736], format: "2023-06-04" "2023-06-11" ...
+ $ Ship_Type              : chr [1:2736] "Container Ship" "Fish Carrier" "Container Ship" "Bulk Carrier" ...
+ $ Route_Type             : chr [1:2736] "None" "Short-haul" "Long-haul" "Transoceanic" ...
+ $ Engine_Type            : chr [1:2736] "Heavy Fuel Oil (HFO)" "Steam Turbine" "Diesel" "Steam Turbine" ...
+ $ Maintenance_Status     : chr [1:2736] "Critical" "Good" "Fair" "Fair" ...
+ $ Speed_Over_Ground_knots: num [1:2736] 12.6 10.4 20.7 21.1 13.7 ...
+ $ Engine_Power_kW        : num [1:2736] 2063 1796 1649 915 1090 ...
+ $ Distance_Traveled_nm   : num [1:2736] 1031 1060 659 1127 1445 ...
+ $ Draft_meters           : num [1:2736] 14.13 14.65 7.2 11.79 9.73 ...
+ $ Weather_Condition      : chr [1:2736] "Moderate" "Rough" "Moderate" "Moderate" ...
+ $ Cargo_Weight_tons      : num [1:2736] 1959 162 178 1737 261 ...
+ $ Operational_Cost_USD   : num [1:2736] 483832 483388 448543 261350 287718 ...
+ $ Revenue_per_Voyage_USD : num [1:2736] 292183 883766 394019 87551 676121 ...
+ $ Turnaround_Time_hours  : num [1:2736] 25.9 63.2 49.4 22.4 64.2 ...
+ $ Efficiency_nm_per_kWh  : num [1:2736] 1.455 0.29 0.5 0.703 1.331 ...
+ $ Seasonal_Impact_Score  : num [1:2736] 1.416 0.886 1.406 1.371 0.583 ...
+ $ Weekly_Voyage_Count    : num [1:2736] 1 6 9 1 8 7 3 6 8 2 ...
+ $ Average_Load_Percentage: num [1:2736] 93.8 93.9 96.2 66.2 80 ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   Date = col_date(format = ""),
+  ..   Ship_Type = col_character(),
+  ..   Route_Type = col_character(),
+  ..   Engine_Type = col_character(),
+  ..   Maintenance_Status = col_character(),
+  ..   Speed_Over_Ground_knots = col_double(),
+  ..   Engine_Power_kW = col_double(),
+  ..   Distance_Traveled_nm = col_double(),
+  ..   Draft_meters = col_double(),
+  ..   Weather_Condition = col_character(),
+  ..   Cargo_Weight_tons = col_double(),
+  ..   Operational_Cost_USD = col_double(),
+  ..   Revenue_per_Voyage_USD = col_double(),
+  ..   Turnaround_Time_hours = col_double(),
+  ..   Efficiency_nm_per_kWh = col_double(),
+  ..   Seasonal_Impact_Score = col_double(),
+  ..   Weekly_Voyage_Count = col_double(),
+  ..   Average_Load_Percentage = col_double()
+  .. )
+ - attr(*, "problems")=&lt;externalptr&gt; </code></pre>
+</div>
+</div>
+</section>
+<section id="data-cleaning" class="level2">
+<h2 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check for missing values</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   Date               Ship_Type              Route_Type 
+                      0                       0                       0 
+            Engine_Type      Maintenance_Status Speed_Over_Ground_knots 
+                      0                       0                       0 
+        Engine_Power_kW    Distance_Traveled_nm            Draft_meters 
+                      0                       0                       0 
+      Weather_Condition       Cargo_Weight_tons    Operational_Cost_USD 
+                      0                       0                       0 
+ Revenue_per_Voyage_USD   Turnaround_Time_hours   Efficiency_nm_per_kWh 
+                      0                       0                       0 
+  Seasonal_Impact_Score     Weekly_Voyage_Count Average_Load_Percentage 
+                      0                       0                       0 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove rows with missing critical values (assuming speed, fuel, efficiency are key factors)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#data &lt;- data %&gt;% drop_na(speed, fuel_consumption, efficiency)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="exploratory-data-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-data-analysis">Exploratory Data Analysis</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary statistics for key metrics</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(data[, <span class="fu">c</span>(<span class="st">"Speed_Over_Ground_knots"</span>, <span class="st">"Efficiency_nm_per_kWh"</span>, <span class="st">"Engine_Power_kW"</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Speed_Over_Ground_knots Efficiency_nm_per_kWh Engine_Power_kW
+ Min.   :10.01           Min.   :0.1002        Min.   : 501   
+ 1st Qu.:13.93           1st Qu.:0.4636        1st Qu.:1148   
+ Median :17.71           Median :0.7899        Median :1757   
+ Mean   :17.60           Mean   :0.7987        Mean   :1758   
+ 3rd Qu.:21.28           3rd Qu.:1.1474        3rd Qu.:2383   
+ Max.   :25.00           Max.   :1.4993        Max.   :2999   </code></pre>
+</div>
+</div>
+</section>
+<section id="distribution-of-ship-speeds" class="level2">
+<h2 class="anchored" data-anchor-id="distribution-of-ship-speeds">Distribution of Ship Speeds</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> Speed_Over_Ground_knots)) <span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">fill =</span> <span class="st">"#69b3a2"</span>, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">bins =</span> <span class="dv">20</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribution of Ship Speeds"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Speed (knots)"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  theme_custom</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex01_files/figure-html/speed-distribution-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="fuel-consumption-vs-speed" class="level2">
+<h2 class="anchored" data-anchor-id="fuel-consumption-vs-speed">Fuel Consumption vs Speed</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> Speed_Over_Ground_knots, <span class="at">y =</span> Engine_Power_kW)) <span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"#0073C2"</span>) <span class="sc">+</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Engine Power vs. Speed"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Speed (knots)"</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Engine Power (kW)"</span>) <span class="sc">+</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  theme_custom</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex01_files/figure-html/fuel-vs-speed-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="efficiency-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="efficiency-analysis">Efficiency Analysis</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(<span class="dv">0</span>), <span class="at">y =</span> Efficiency_nm_per_kWh)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">"#ffcc00"</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ship Efficiency Boxplot"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">""</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Efficiency (nm/kWh)"</span>) <span class="sc">+</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  theme_custom</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Take-home_Ex01_files/figure-html/efficiency-boxplot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+### Key Findings</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>1. Most ships operate within a speed range of 10-25 knots, with minor variations.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>2. Engine power increases with speed, but the relationship is not perfectly linear.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>3. Efficiency (nautical miles per kWh) varies significantly among ships, indicating potential for optimization.</code></pre>
+</div>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

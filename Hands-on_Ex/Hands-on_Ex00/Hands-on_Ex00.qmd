@@ -9,7 +9,7 @@ execute:
   freeze: true
 ---
 
-## Getting started 
+## Getting started
 
 Loading tidyverse onto r environment by using the code chunk below.
 
@@ -19,10 +19,7 @@ pacman::p_load(tidyverse)
 
 ## Importing data
 
-Code chunj below uses read_csv() of readr to import
-REALIS2019.csv into r environment as a tibble data.frame.
-
-
+Code chunj below uses read_csv() of readr to import REALIS2019.csv into r environment as a tibble data.frame.
 
 ```{r}
 realis2019 <- read_csv("data/REALIS2019.csv")
@@ -35,7 +32,6 @@ popdata_fat <- read_csv("data/PopData2019_fat.csv")
 
 ## Pivoting data
 
-
 ```{r}
 #| eval: FALSE
 popdata_long <- popdata_fat %>%
@@ -44,19 +40,15 @@ popdata_long <- popdata_fat %>%
                values_to = "Population")
 ```
 
-
 ```{r}
 #| eval: FALSE
 write_rds(popdata_long,"rds/popdata_long.rds")
 ```
 
-
 ```{r}
 #| echo: FALSE
 popdata_long <- read_rds("rds/popdata_long.rds")
 ```
-
-
 
 ## Working with dplyr
 
@@ -70,8 +62,6 @@ select(`Project Name`,
 realis2019_selected
 ```
 
-
-
 ## Working with filter() of dplyr.
 
 ```{r}
@@ -83,7 +73,6 @@ filter(`Unit Price ($ psm)` <= 13000)
 ```
 
 ### Putting all togther
-
 
 ## Working with dplyr
 
@@ -99,9 +88,3 @@ filter(`Property Type` =="Condominium" |
 filter(`Type of Sale` == "New Sale") %>%
 filter(`Unit Price ($ psm)` <= 13000)
 ```
-
-
-
-
-
-

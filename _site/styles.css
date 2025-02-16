@@ -1,27 +1,60 @@
-/* css styles */
-body {
-    background-color: #FFFFFF; /* Lilac background */
-    color: #5a2d6b; /* Dark purple text */
+/* CSS Styles - Lilac and Flight Theme */
+
+/* Navbar Logo */
+.navbar-brand > img {
+  max-height: 30px;
 }
-h1, h2, h3, h4, h5, h6 {
-    color: #f2d9e8; /* Pink headers */
+
+/* Custom callout boxes */
+
+.lightbox {
+  padding: 1.5em 2.5em 1.5em 6.5em;
+  margin-bottom: 10px;
+  border: 1.5px dotted #7E5A9B; /* Lilac border */
+  border-radius: 10px;
+  font-size: 13px;
+  font-style: normal;
+  background: #E6D0F2 5px center/3em no-repeat; /* Soft lilac background */
 }
-a {
-    color: #5a2d6b; /* Link color */
-    text-decoration: none;
+
+.light {
+  background-image: url("Images/lilac-light.png");
+  background-position: left;
+  background-position-x: 1rem;
+  background-position-y: 1rem;
+  background-size: auto 75px;  
+  font-style: normal;
 }
-a:hover {
-    color:  #f2d9e8; /* Hover color for links */
+
+.notebox {
+  padding: 1.5em 3.5em 1.5em 8em;
+  margin-bottom: 10px;
+  border: 1.5px dotted #7A89C2; /* Flight theme blue */
+  border-radius: 10px;
+  font-style: normal;
+  background: #D6E4F0 5px center/3em no-repeat; /* Sky blue background */
 }
-code {
-    background-color: #f2d9e8; /* Lilac code background */
-    color: #5a2d6b; /* Code text */
-    border-radius: 4px;
-    padding: 2px 4px;
+
+.note {
+  background-image: url("Images/flight-note.png");
+  background-position: left;
+  background-position-x: 1rem;  
+  background-position-y: 1rem;
+  background-size: auto 75px;  
 }
-pre {
-    background-color: #f2d9e8; /* Lilac preformatted text background */
-    color: #5a2d6b;
-    border-radius: 6px;
-    padding: 10px;
+
+.sherbox {
+  padding: 1.5em 3.5em 1.5em 8em;
+  margin-bottom: 10px;
+  border: 1.5px dotted #5A4B89; /* Dark lilac for contrast */
+  border-radius: 10px;
+  background: #C9B3E0 5px center/3em no-repeat; /* Muted lilac */
+}
+
+.sherlock {
+  background-image: url("Images/flight-sherlock.png");
+  background-position: left;
+  background-position-x: 1rem;  
+  background-position-y: 1rem;
+  background-size: auto 75px;  
 }

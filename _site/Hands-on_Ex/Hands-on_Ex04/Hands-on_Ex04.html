@@ -9,7 +9,7 @@
 <meta name="author" content="Priya">
 <meta name="dcterms.date" content="2025-02-06">
 
-<title>Hands-on_Exercise 4 – ISSS608 Coursework</title>
+<title>Hands-on_Exercise 4 – PRIYA’s Cloud Nine Analytics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -66,15 +66,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
+<link href="../..//Take-Home_Ex/Take-home_Ex01/Pictures/flight.webp" rel="icon">
 <script src="../../site_libs/quarto-html/quarto.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-9e1f2a4632985dffc2c80318c992baf5.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-ddd961a2510921635943dfbbd19534c4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-492e07706d5c2c002727c97a04d47932.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -139,18 +140,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../../index.html">
-    <span class="navbar-title">ISSS608 Coursework</span>
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../Take-Home_Ex/Take-home_Ex01/Pictures/logo1.jpeg" alt="" class="navbar-logo">
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
@@ -181,6 +181,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html">
  <span class="dropdown-text">Hands-on Exercise 4</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html">
+ <span class="dropdown-text">Hands-on Exercise 5</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -191,6 +195,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li>
     <a class="dropdown-item" href="../../In-class_Ex1.html">
  <span class="dropdown-text">In-class Exercise 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-Class_Ex/In-Class_Ex04/In_Class_Ex04.html">
+ <span class="dropdown-text">In-Class Exercise 4</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-Class_Ex/In-Class_Ex05/In_Class_Ex05.html">
+ <span class="dropdown-text">In-Class Exercise 5</span></a>
   </li>  
     </ul>
   </li>
@@ -226,33 +238,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#a-visualizing-distribution" id="toc-a-visualizing-distribution" class="nav-link active" data-scroll-target="#a-visualizing-distribution"><strong>4.a) Visualizing distribution</strong></a></li>
-  <li><a href="#b-visual-statistical-analysis" id="toc-b-visual-statistical-analysis" class="nav-link" data-scroll-target="#b-visual-statistical-analysis"><strong>4.b) Visual Statistical Analysis</strong></a></li>
-  <li><a href="#c-visualising-uncertainty" id="toc-c-visualising-uncertainty" class="nav-link" data-scroll-target="#c-visualising-uncertainty"><strong>4.c)&nbsp; Visualising Uncertainty</strong></a></li>
-  <li><a href="#d-funnel-plots-for-fair-comparisons" id="toc-d-funnel-plots-for-fair-comparisons" class="nav-link" data-scroll-target="#d-funnel-plots-for-fair-comparisons"><strong>4.d)&nbsp; Funnel Plots for Fair Comparisons</strong></a>
-  <ul class="collapse">
-  <li><a href="#funnelplotr-methods" id="toc-funnelplotr-methods" class="nav-link" data-scroll-target="#funnelplotr-methods"><strong>FunnelPlotR methods</strong></a>
-  <ul class="collapse">
-  <li><a href="#funnelplotr-methods-the-basic-plot" id="toc-funnelplotr-methods-the-basic-plot" class="nav-link" data-scroll-target="#funnelplotr-methods-the-basic-plot"><strong>12.4.1 FunnelPlotR methods: The basic plot</strong></a></li>
-  <li><a href="#funnelplotr-methods-makeover-1" id="toc-funnelplotr-methods-makeover-1" class="nav-link" data-scroll-target="#funnelplotr-methods-makeover-1"><strong>12.4.2 FunnelPlotR methods: Makeover 1</strong></a></li>
-  <li><a href="#funnelplotr-methods-makeover-2" id="toc-funnelplotr-methods-makeover-2" class="nav-link" data-scroll-target="#funnelplotr-methods-makeover-2"><strong>12.4.3 FunnelPlotR methods: Makeover 2</strong></a></li>
-  </ul></li>
-  <li><a href="#funnel-plot-for-fair-visual-comparison-ggplot2-methods" id="toc-funnel-plot-for-fair-visual-comparison-ggplot2-methods" class="nav-link" data-scroll-target="#funnel-plot-for-fair-visual-comparison-ggplot2-methods"><strong>12.5 Funnel Plot for Fair Visual Comparison: ggplot2 methods</strong></a>
-  <ul class="collapse">
-  <li><a href="#computing-the-basic-derived-fields" id="toc-computing-the-basic-derived-fields" class="nav-link" data-scroll-target="#computing-the-basic-derived-fields"><strong>12.5.1 Computing the basic derived fields</strong></a></li>
-  <li><a href="#calculate-lower-and-upper-limits-for-95-and-99.9-ci" id="toc-calculate-lower-and-upper-limits-for-95-and-99.9-ci" class="nav-link" data-scroll-target="#calculate-lower-and-upper-limits-for-95-and-99.9-ci"><strong>12.5.2 Calculate lower and upper limits for 95% and 99.9% CI</strong></a></li>
-  <li><a href="#plotting-a-static-funnel-plot" id="toc-plotting-a-static-funnel-plot" class="nav-link" data-scroll-target="#plotting-a-static-funnel-plot"><strong>12.5.3 Plotting a static funnel plot</strong></a></li>
-  <li><a href="#interactive-funnel-plot-plotly-ggplot2" id="toc-interactive-funnel-plot-plotly-ggplot2" class="nav-link" data-scroll-target="#interactive-funnel-plot-plotly-ggplot2"><strong>12.5.4 Interactive Funnel Plot: plotly + ggplot2</strong></a></li>
-  </ul></li>
-  </ul></li>
-  </ul>
-</nav>
-    </div>
+    
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
@@ -282,7 +268,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">February 8, 2025</p>
+      <p class="date-modified">February 16, 2025</p>
     </div>
   </div>
     
