@@ -2,7 +2,6 @@
 title: "Take home Exercise2"
 author: "Priya"
 date: "March 5,2025"
-date-modified: "last-modified"
 execute:
   echo: true
   eval: true
@@ -225,6 +224,11 @@ The chart presents **total merchandise trade at current prices from 2020 to 2024
 5.  **Not Interactive** – Users cannot explore the data dynamically, such as hovering over values or filtering by category.
 
 ### 3.1.3 Revamp
+```{r}
+colnames(combined_summary)
+
+```
+
 
 ```{r}
 # Load required libraries
@@ -238,7 +242,7 @@ total_trade_summary <- combined_summary %>%
   group_by(Year) %>%
   summarise(Exports = sum(Annual_Export, na.rm = TRUE),
             Imports = sum(Annual_ReExport, na.rm = TRUE),
-            Total_Trade = sum(Trade_Value, na.rm = TRUE))  
+            Total_Trade = sum(Value, na.rm = TRUE))  
 
 # Reshape data for plotting
 trade_long <- total_trade_summary %>%
@@ -280,49 +284,11 @@ ggplot(trade_long, aes(x = Year, y = Value, color = Trade_Type, group = Trade_Ty
 
 
 ```
+```{r}
+colnames(combined_summary)
+```
 
 ```{r}
-# Load required libraries
-library(ggplot2)
-library(dplyr)
-library(tidyr)
-library(scales)  # For formatting numbers
-
-# Ensure 'Type' column is not duplicated
-#combined_summary <- combined_summary %>%
-  #rename(Trade_Value = Value)  # Rename before pivoting to prevent duplication
-
-# Reshape data
-trade_long <- combined_summary %>%
-  pivot_longer(cols = Trade_Value, names_to = "Category", values_to = "Value", names_repair = "unique")
-
-# Define pastel colors for Import and Export
-pastel_colors <- c("Export" = "#D8BFD8",   # Lilac
-                   "Import" = "#FFB6C1")  # Light Pink
-
-# Grouped Bar Chart
-ggplot(trade_long, aes(x = Year, y = Value, fill = Type)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  
-  # Apply pastel color scheme
-  scale_fill_manual(values = pastel_colors) +
-  
-  # Ensure X-axis is properly formatted
-  scale_x_continuous(breaks = seq(min(trade_long$Year), max(trade_long$Year), by = 1)) +
-  
-  # Format Y-axis to show numbers properly
-  scale_y_continuous(labels = comma) +  
-  
-  # Titles and Labels
-  labs(title = "Total Merchandise Trade at Current Prices (2020-2024)",
-       subtitle = "Grouped Bar Chart for Clearer Yearly Comparison",
-       x = "Year",
-       y = "Trade Value (S$ Billion)",
-       fill = "Trade Type") +
-  
-  # Clean theme
-  theme_minimal()
-
 
 ```
 
@@ -483,27 +449,27 @@ ggplotly(p3, tooltip = c("Partner", "Trade_Value"))
 
 #### **Pros:**
 
-1.   **Visually Appealing** – The colorful pie chart effectively differentiates service categories.
+1.  **Visually Appealing** – The colorful pie chart effectively differentiates service categories.
 
-2.   **Clear Data Labels** – Each category has labeled values (S\$ billion) and percentage shares, making it easy to interpret.
+2.  **Clear Data Labels** – Each category has labeled values (S\$ billion) and percentage shares, making it easy to interpret.
 
-3.   **Icons for Categories** – The use of small icons helps represent different service types intuitively.
+3.  **Icons for Categories** – The use of small icons helps represent different service types intuitively.
 
-4.   **Total Imports Highlighted** – The total service imports (S\$ 469.2 billion) is prominently displayed at the top.
+4.  **Total Imports Highlighted** – The total service imports (S\$ 469.2 billion) is prominently displayed at the top.
 
-5.   **Well-Structured Layout** – The chart is organized neatly with category labels placed around the pie for clarity.
+5.  **Well-Structured Layout** – The chart is organized neatly with category labels placed around the pie for clarity.
 
-####  **Cons:**
+#### **Cons:**
 
-1.   **Pie Chart Limitations** – Hard to compare similar-sized segments accurately, making a **bar chart** potentially more effective.
+1.  **Pie Chart Limitations** – Hard to compare similar-sized segments accurately, making a **bar chart** potentially more effective.
 
-2.   **Overlapping Labels** – Some text is small and cluttered (e.g., **smaller service categories** like government goods).
+2.  **Overlapping Labels** – Some text is small and cluttered (e.g., **smaller service categories** like government goods).
 
-3.   **Lack of Trend Insights** – The chart shows a **single year’s data** without historical comparisons or growth trends.
+3.  **Lack of Trend Insights** – The chart shows a **single year’s data** without historical comparisons or growth trends.
 
-4.   **No Breakdown of Changes** – It does not show **year-over-year changes** or variations in service categories.
+4.  **No Breakdown of Changes** – It does not show **year-over-year changes** or variations in service categories.
 
-5.   **No Interactivity** – A **drill-down or interactive version** (e.g., hover tooltips in Plotly) would enhance usability.
+5.  **No Interactivity** – A **drill-down or interactive version** (e.g., hover tooltips in Plotly) would enhance usability.
 
 ### 3.3.3 Revamp
 
@@ -577,6 +543,7 @@ p6
 
 
 
+
 ```
 
 # 4.Time series analysis
@@ -628,9 +595,10 @@ model_fit <- train_data %>%
 model_fit %>% glance()
 
 # Step 7: Model Accuracy Comparison
-model_fit %>%
+model_fit %>% 
   accuracy() %>%
-  arrange(Year)
+  arrange(.model)  # Arrange by model type instead
+
 
 # Step 8: Forecasting for Next 12 Months
 fc <- model_fit %>%
