@@ -642,5 +642,12 @@
     "title": "In-Class_Exercise 07",
     "section": "Visual Forecasting",
     "text": "Visual Forecasting\n\nvietnam_ts &lt;- tsibble_longer %&gt;%\n  filter(Country == \"Vietnam\") %&gt;% \n  mutate(Type = if_else(\n    `Month-Year` &gt;= \"2019-01-01\", \n    \"Hold-out\", \"Training\"))\n\n\nvietnam_train &lt;- vietnam_ts %&gt;%\n  filter(`Month-Year` &lt; \"2019-01-01\")\n\n\nvietnam_train %&gt;%\n  model(stl = STL(Arrivals)) %&gt;%\n  components() %&gt;%\n  autoplot()"
+  },
+  {
+    "objectID": "Take-Home_Ex/Take-home_Ex02/Take-home_Ex02.html",
+    "href": "Take-Home_Ex/Take-home_Ex02/Take-home_Ex02.html",
+    "title": "Take home Exercise2",
+    "section": "",
+    "text": "Overview\nThe Singapore Department of Statistics (SingStat) website provides official data on Singapore’s economy, society, and trade through interactive dashboards, infographics, and datasets. Its International Trade section presents key trade figures, including exports, imports, and major trading partners, using structured visualizations. For this take-home exercise, I am evaluating three of these visualizations to assess their clarity, design, and effectiveness. By identifying strengths and suggesting improvements, this analysis aims to enhance the presentation of trade data, making it more accessible and engaging for a wider audience.\n1.1 Load Required Libraries\nBefore starting, install and load the necessary R packages:\n# Load libraries\nlibrary(tidyverse)   # Data wrangling and visualization\nlibrary(readxl)      # Read Excel files\nlibrary(lubridate)   # Work with date formats\nlibrary(janitor)     # Clean column names\nlibrary(ggplot2)     # Visualization\nlibrary(tsibble)     # Time-series data wrangling\nlibrary(forecast)    # Time-series forecasting\nlibrary(feasts)      # Time-series decomposition\nlibrary(readxl)"
   }
 ]

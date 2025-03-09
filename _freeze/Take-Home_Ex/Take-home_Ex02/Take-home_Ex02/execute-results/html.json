@@ -1,0 +1,15 @@
+{
+  "hash": "71ee0246cfc6be77bef3ec98c2668061",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Take home Exercise2\"\nauthor: \"Priya\"\ndate: \"March 5,2025\"\ndate-modified: \"last-modified\"\nexecute:\n  echo: true\n  eval: true\n  warning: false\n  freeze: true\n---\n\n\n\n1.  Overview\n\nThe **Singapore Department of Statistics (SingStat)** website provides official data on Singapore’s economy, society, and trade through interactive dashboards, infographics, and datasets. Its **International Trade** section presents key trade figures, including exports, imports, and major trading partners, using structured visualizations. For this take-home exercise, I am evaluating three of these visualizations to assess their clarity, design, and effectiveness. By identifying strengths and suggesting improvements, this analysis aims to enhance the presentation of trade data, making it more accessible and engaging for a wider audience.\n\n1.1 Load Required Libraries\n\nBefore starting, install and load the necessary R packages:\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# Load libraries\nlibrary(tidyverse)   # Data wrangling and visualization\nlibrary(readxl)      # Read Excel files\nlibrary(lubridate)   # Work with date formats\nlibrary(janitor)     # Clean column names\nlibrary(ggplot2)     # Visualization\nlibrary(tsibble)     # Time-series data wrangling\nlibrary(forecast)    # Time-series forecasting\nlibrary(feasts)      # Time-series decomposition\nlibrary(readxl)\n```\n:::\n\n\n\n## \n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
