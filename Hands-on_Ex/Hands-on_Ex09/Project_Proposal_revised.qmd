@@ -1,0 +1,111 @@
+---
+title: "Revised Project Proposal: WeatherXplore"
+---
+
+## **1. Overview**
+
+This project aims to develop an interactive visual analytics tool for Singapore’s climate data. While historical weather data is publicly available, existing platforms lack comprehensive visualizations, advanced forecasting capabilities, and spatial interpolation techniques. Our solution will integrate various R packages to provide in-depth climate analytics.
+
+## **2. Motivation**
+
+Singapore’s National Environment Agency provides access to historical weather data, but the available tools lack interactivity, comparative analysis, and advanced statistical modeling. This project addresses these gaps by:
+
+-   Providing interactive and comparative visualizations of weather trends.
+
+-   Conducting advanced time-series forecasting for rainfall and temperature.
+
+-   Utilizing geospatial interpolation techniques to estimate weather conditions at unmonitored locations.
+
+## **3. The Problems Addressed**
+
+-   Current government tools are static and offer limited interactivity.
+
+-   No existing system provides an integrated platform for time-series analysis and forecasting.
+
+-   Spatial interpolation is missing, restricting accurate weather estimations beyond monitored stations.
+
+## **4. Data Sources**
+
+-   **Climate Historical Daily Records (Weather.gov.sg)**
+
+    The Meteorological Service Singapore provides a publicly accessible repository of historical daily weather data. The dataset includes:
+
+    -   **Temperature and Rainfall Data**: Recorded at 19 weather stations across Singapore.
+
+    -   **Time Span**: 5 years (2019-2024), providing a rich dataset to analyze weather trends and variations.
+
+    -   **Data Frequency**: Daily records capturing temperature highs/lows and total rainfall.
+
+    -   **Spatial Coverage**: Covers multiple monitoring stations, offering regional weather insights.
+
+    -   **Missing Data Handling**: Any gaps in the dataset are addressed through imputation techniques such as simple moving averages.
+
+    -   **Data Format**: The dataset is available in structured tabular formats, making it suitable for integration with R-based analytical tools.
+
+    -   **Source**: Data retrieved from [Weather.gov.sg](https://www.weather.gov.sg/climate-historical-daily/), ensuring credibility and consistency with Singapore’s official climate records.
+
+    | Dataset | Frequency | Period | Source |
+    |----|----|----|----|
+    | Climate Historical Daily Records (rainfall, temperature) | Daily | 2019-2024 | <https://www.weather.gov.sg/climate-historical-daily/> |
+
+## **5. Approach and Methodology**
+
+The tool will be developed in **R Shiny**, divided into three core modules:
+
+### **5.1 Exploratory & Confirmatory Data Analysis (Priya)**
+
+-   Analyzing temperature and rainfall variations over five years.
+
+-   Ridge plots to visualize station-wise trends over time.
+
+-   Calendar heatmaps to capture daily temperature changes.
+
+-   Comparative statistical tests to validate observed patterns.
+
+### **5.2 Time Series Analysis & Forecasting (Phoo)**
+
+-   Decomposition of time-series data into **trend, seasonal, and white noise** components.
+
+-   Implementation of **ARIMA and exponential smoothing** models for forecasting.
+
+-   Model validation and performance comparison.
+
+### **5.3 Geospatial Analysis (Kenneth)**
+
+-   **Geofacet visualizations** to compare weather variations across different locations.
+
+-   **Spatial interpolation** to estimate rainfall and temperature beyond monitored stations.
+
+-   Using Singapore’s official climate datasets for interpolation techniques.
+
+### **5.4 Data Preparation**
+
+-   Consolidation of multiple datasets into a structured format.
+
+-   Handling missing values and standardizing variable names.
+
+-   Code implementation to combine and clean datasets efficiently.
+
+## **6. Implementation Timeline**
+
+| Task                   | Deadline                |
+|------------------------|-------------------------|
+| Proposal Revision      | March 20, 2025          |
+| Prototype Completion   | March 22, 2025 (4 PM)   |
+| Shiny App Development  | March 29, 2025 (4-6 PM) |
+| User Guide Preparation | March 30, 2025          |
+| Poster Preparation     | March 30, 2025          |
+
+## **7. Expected Outcome**
+
+-   A **web-based visual analytics tool** allowing users to explore historical and predictive weather trends interactively.
+
+-   Advanced **time-series forecasting** with seasonal adjustments.
+
+-   **Geospatial interpolation** to estimate climate parameters at unmonitored locations.
+
+-   An **interactive dashboard** enabling policymakers, researchers, and the general public to derive meaningful insights.
+
+## **8. Tools & Technologies**
+
+-   **R Packages:** `tidyverse`, `dplyr`, `lubridate`, `tidygraph`, `ggraph`, `visNetwork`, `ggplot2`, `shiny`, `leaflet`, `sf`.
