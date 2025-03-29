@@ -1,0 +1,101 @@
+---
+title: "Take3"
+author: "priya"
+---
+
+---
+title: "Singapore Climate Trends (2020–2024)"
+author: "Priya"
+date: "March 22, 2025"
+date-modified: "last-modified"
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    code-summary: "Show code"
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# 1. Overview
+
+This report explores weather patterns across various Singapore stations between **2020 and 2024**. Using the cleaned dataset `weather_data_clean.csv`, we analyze rainfall and temperature variations across years, months, and stations.
+
+# 2. Load Libraries and Data
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(plotly)
+
+weather <- read_csv("C:/privatejet/ISSS608/Take-Home_Ex/Take-home_Ex03/data/weather_data_clean.csv")
+
+# Convert Date column to Date type
+weather$Date <- ymd(weather$Date)
+
+# Extract Year, Month, Day
+weather <- weather %>%
+  mutate(Year = year(Date),
+         Month = month(Date, label = TRUE),
+         Day = day(Date)) %>%
+  filter(Year >= 2020 & Year <= 2024)
+```
+
+# 3. Annual Rainfall Trend (2020–2024)
+
+```{r}
+annual_rainfall <- weather %>%
+  group_by(Year) %>%
+  summarise(TotalRainfall = sum(`Daily Rainfall Total (mm)`, na.rm = TRUE))
+
+ggplot(annual_rainfall, aes(x = Year, y = TotalRainfall)) +
+  geom_col(fill = "skyblue") +
+  labs(title = "Total Rainfall per Year (2020–2024)",
+       x = "Year", y = "Total Rainfall (mm)") +
+  theme_minimal()
+```
+
+# 4. Violin Plot of Mean Temperature by Station
+
+```{r}
+plot_data <- weather %>% filter(!is.na(`Mean Temperature (°C)`))
+
+plot_ly(data = plot_data,
+        x = ~Station,
+        y = ~`Mean Temperature (°C)`,
+        type = 'violin',
+        box = list(visible = TRUE),
+        meanline = list(visible = TRUE),
+        marker = list(opacity = 0.5,
+                      color = 'lightblue',
+                      line = list(width = 0.5, color = 'darkblue')),
+        color = ~Station) %>%
+  layout(title = "Mean Temperature Distribution by Station",
+         xaxis = list(title = "Station", tickangle = 45),
+         yaxis = list(title = "Mean Temperature (°C)"))
+```
+
+# 5. Monthly Rainfall Pattern (Across Years)
+
+```{r}
+monthly_avg <- weather %>%
+  group_by(Year, Month) %>%
+  summarise(AvgRainfall = mean(`Daily Rainfall Total (mm)`, na.rm = TRUE))
+
+ggplot(monthly_avg, aes(x = Month, y = AvgRainfall, group = Year, color = as.factor(Year))) +
+  geom_line(size = 1.2) +
+  labs(title = "Average Monthly Rainfall (2020–2024)",
+       x = "Month", y = "Average Daily Rainfall (mm)", color = "Year") +
+  theme_minimal()
+```
+
+# 6. Conclusion
+
+From the visualizations, we observe yearly fluctuations in rainfall and distinct temperature distributions among stations. The violin plot reveals how certain stations experience broader temperature ranges. Monthly patterns suggest rainfall peaks during specific monsoon periods.
+
+Further analysis could explore wind patterns or extreme weather events using this same dataset.

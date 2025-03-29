@@ -1,0 +1,81 @@
+---
+title: "Take home final"
+author: "Priya"
+---
+
+---
+title: "Take home Exercise 3 - Extended Visual Insights"
+author: "Priya"
+date: "March 29, 2025"
+---
+
+# 4.7 Distribution of Mean Temperature by Region
+
+```{r}
+library(ggplot2)
+library(readr)
+library(dplyr)
+
+# Load data
+weather <- read_csv("data/weather_data_cleaned.csv")
+
+# Convert Date to date format and extract Year/Month
+weather$Date <- lubridate::ymd(weather$Date)
+weather$Year <- lubridate::year(weather$Date)
+weather$Month <- lubridate::month(weather$Date)
+
+# Boxplot: Mean Temperature by Region
+p <- ggplot(weather, aes(x = Region, y = `Mean Temperature (°C)`)) +
+  geom_boxplot(fill = "skyblue", color = "darkblue", outlier.shape = 16, outlier.size = 1.5) +
+  labs(title = "Distribution of Mean Temperature by Region",
+       x = "Region",
+       y = "Mean Temperature (°C)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+plotly::ggplotly(p)
+```
+
+# 4.8 Yearly Rainfall Trend across All Stations
+
+```{r}
+# Summarize total rainfall per year
+yearly_rainfall <- weather %>%
+  group_by(Year) %>%
+  summarise(total_rainfall = sum(`Daily Rainfall Total (mm)`, na.rm = TRUE))
+
+# Line plot
+p <- ggplot(yearly_rainfall, aes(x = Year, y = total_rainfall)) +
+  geom_line(color = "blue", size = 1.2) +
+  geom_point(color = "darkblue", size = 2) +
+  labs(title = "Total Rainfall per Year across All Stations",
+       x = "Year", y = "Total Rainfall (mm)") +
+  theme_minimal()
+
+plotly::ggplotly(p)
+```
+
+# 4.9 Monthly Temperature Heatmap per Station
+
+```{r}
+# Average temperature by station and month
+monthly_temp <- weather %>%
+  group_by(Station, Month) %>%
+  summarise(avg_temp = mean(`Mean Temperature (°C)`, na.rm = TRUE))
+
+# Heatmap
+p <- ggplot(monthly_temp, aes(x = factor(Month), y = Station, fill = avg_temp)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "lightblue", high = "darkred") +
+  labs(title = "Average Monthly Mean Temperature by Station",
+       x = "Month", y = "Station", fill = "Avg Temp (°C)") +
+  theme_minimal()
+
+plotly::ggplotly(p)
+```
+
+# 4.10 Violin Plot of Mean Temperature Across Years (All Stations)
+
+\`\``{r} # Violin plot for all stations grouped by year p <- ggplot(weather, aes(x = factor(Year), y =`Mean Temperature (°C)\`)) + geom_violin(fill = "lightblue", color = "darkblue") + geom_boxplot(width = 0.1, outlier.shape = NA) + labs(title = "Mean Temperature Distribution Across Years (All Stations)", x = "Year", y = "Mean Temperature (°C)") + theme_minimal()
+
+plotly::ggplotly(p)
