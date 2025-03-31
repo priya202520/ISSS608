@@ -14,27 +14,29 @@ code-summary: "Show the code"
 
 # 1 Overview
 
-In this exercise, we are required to select one of the module of your proposed Shiny application and complete the following tasks:
+We are tasked with selecting one module from our proposed Shiny application and completing the following tasks:
 
--   To evaluate and determine the necessary R packages needed for your Shiny application are supported in R CRAN,
+-    **Package Verification:** Ensure that the required R packages for the application are available on CRAN.
 
--   To prepare and test the specific R codes can be run and returned the correct output as expected,
+-    **Code Validation:** Develop and test the R code to confirm that it runs properly and returns the expected output.
 
--   To determine the parameters and outputs that will be exposed on the Shiny applications, and
+-    **Parameter and Output Definition:** Identify the parameters and outputs that will be featured in the application.
 
--   To select the appropriate Shiny UI components for exposing the parameters determine above.
+-    **UI Component Selection:** Choose the appropriate Shiny UI components to display the identified parameters.
 
 # 2 Project Information
 
-In this project, we will analyze weather across different areas in Singapore and build an interactive R Shiny application.
+In this project, we’ll be analysing weather patterns across different parts of Singapore and building an interactive R Shiny app.
 
-For this exercise, we will focus on **EDA and CDA tab** where users can explore the distribution and trends in the dataset for specific periods or stations, and use statistical analysis to confirm the trends.
+For this exercise, let’s focus on the EDA and CDA tabs, where we can explore data distribution, spot trends by time or station, and use statistical methods to support our findings.s.
 
 # 3 Data Preparation
 
 ## 3.1 Installing R packages
 
-The code chunk below uses `p_load()` of **pacman** package to check if multiple packages are installed in the computer. If they are, then they will be launched into R.
+When working in R, we often rely on external packages to add more functionality — like data manipulation, visualization, or statistical analysis.
+
+To use these packages, we need to install them first using functions like `install.packages("package_name")`. Once installed, we can load them into our R session using `library(package_name)`. To make this process more efficient, especially when dealing with many packages, we can use tools like `pacman::p_load()` which installs missing packages and loads them in one step.
 
 ```{r}
 pacman::p_load(tidyverse, naniar,imputeTS, DT, lubridate,ggplot2,ggstatsplot,plotly,
@@ -43,7 +45,7 @@ pacman::p_load(tidyverse, naniar,imputeTS, DT, lubridate,ggplot2,ggstatsplot,plo
 
 ## 3.2 Importing Data
 
-We will use the weather dataset for 63 stations between 2014 to 2023 from [Meteorological Service Singapore (MSS)](http://www.weather.gov.sg/climate-historical-daily/). After the data preparation, we left with 11 stations. The process of data preparation is explained in via this link.
+We will use the weather dataset for 17 stations between 2020 to 2024 from [Meteorological Service Singapore (MSS)](http://www.weather.gov.sg/climate-historical-daily/). After cleaning and preparing the data, we narrowed it down to 11 stations. The steps taken during the data preparation process are explained in detail.
 
 ```{r}
 weather <- read_csv("data/weather_data_cleaned.csv") 
@@ -58,7 +60,7 @@ glimpse(weather)
 
 # 4 Exploratory Data Analysis
 
-In the dataset, there are 4 variables for users to choose to explore.
+In the data set, there are 4 variables for users to choose to explore.
 
 -   `Daily Rainfall Total (mm)`
 
@@ -76,270 +78,148 @@ Other exploratory plots may include in the future work.
 colnames(weather)
 ```
 
-## 4.1 Compare Mean Temperature (°C) for Station(s) Across the specified Year
+### 4.1 Compare Temperature Range (Max - Min) Across Stations by Region
 
 ```{r}
-library(lubridate)
+weather <- weather %>% 
 
-# Convert Date column to Date type and extract year
-weather$Year <- year(ymd(weather$Date))
+  mutate(Date = ymd(Date),
+
+         Year = year(Date),
+
+         Month = month(Date, label = TRUE))
+weather %>%
+  mutate(
+    TempRange = `Maximum Temperature (°C)` - `Minimum Temperature (°C)`,
+    Region = factor(Region, levels = c("Central", "East", "North", "Northeast", "West")),
+    Station = fct_reorder(Station, as.numeric(Region))  # Group by Region levels explicitly
+  ) %>%
+  ggplot(aes(x = Station, y = TempRange, fill = Region)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(
+    title = "Temperature Range by Station (Grouped by Region)",
+    y = "Temperature Range (°C)",
+    x = "Station",
+    fill = "Region"
+  )
+
+
 
 ```
 
+### 4.2 Compare Monthly Averages of Temperature and Rainfall Across Years
+
 ```{r}
-print(weather$Year)
+# Ensure Month is an ordered factor with month names
+weather <- weather %>%
+  mutate(
+    Month = month(Date, label = TRUE, abbr = TRUE),  # e.g., Jan, Feb
+    Year = year(Date)
+  )
+
+# Recreate temperature plot
+temp_plot <- weather %>%
+  group_by(Year, Month) %>%
+  summarise(AvgTemp = mean(`Mean Temperature (°C)`, na.rm = TRUE)) %>%
+  ggplot(aes(x = Month, y = AvgTemp, group = Year, color = as.factor(Year))) +
+  geom_line(size = 1) +
+  labs(title = "Monthly Average Temperature by Year", y = "Temperature (°C)", x = "Month", color = "Year") +
+  theme_minimal()
+
+# Recreate rainfall plot
+rain_plot <- weather %>%
+  group_by(Year, Month) %>%
+  summarise(TotalRain = sum(`Daily Rainfall Total (mm)`, na.rm = TRUE)) %>%
+  ggplot(aes(x = Month, y = TotalRain, group = Year, color = as.factor(Year))) +
+  geom_line(size = 1) +
+  labs(title = "Monthly Total Rainfall by Year", y = "Rainfall (mm)", x = "Month", color = "Year") +
+  theme_minimal()
+
+# Combine both
+temp_plot / rain_plot
+
+
+
 ```
+### 4.3 Top 10 Wettest Stations (Annual Avg) 
 
 ```{r}
-# Users define the year
-selected_year <- "2021"
+station_summary <- weather %>%
+  group_by(Station) %>%
+  summarise(TotalRain = sum(`Daily Rainfall Total (mm)`, na.rm = TRUE))
 
-#Filter data for the specified year
-allstations_year <- weather %>%    
-  group_by(Station) %>%           
-  filter(Year == selected_year)
-
-
-plot_ly(data = allstations_year,
-             x = ~Station,
-             y = ~`Mean Temperature (°C)`,
-         box = list(visible = T),
-         meanline = list(visible = T, 
-                         color = "darkblue"),
-        type = "violin",
-        spanmode = 'hard',
-        marker = list(opacity = 0.5, 
-                      color = 'lightblue',
-                      line = list(width = 0.5, 
-                                  color = 'darkblue')), 
-        scalemode = 'count',
-        color = ~Station,  
-        hoveron = "points+kde",
-        line = list(width=1)) %>%
-layout(title = list(text = paste("Mean Temperature across all Stations in", selected_year)),
-       xaxis = list(title = "Station"),
-       yaxis = list(title = "Mean Temperature (°C)"))
-
+station_summary %>%
+  top_n(10, TotalRain) %>%
+  ggplot(aes(x = reorder(Station, TotalRain), y = TotalRain)) +
+  geom_point(size = 5, color = "#2c7fb8") +
+  geom_segment(aes(xend = Station, y = 0, yend = TotalRain), color = "#2c7fb8", linewidth = 1.2) +
+  coord_flip() +
+  labs(title = "Top 10 Wettest Stations", x = "Station", y = "Total Rainfall (mm)") +
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold"))
 ```
-
-## 4.2 Compare Mean Temperature (°C) for One Station Across Different Years
-
-```{r}
-selected_onestation <- "Ang Mo Kio"
-
-#Filter Ang Mo Kio data
-onestation_data <- weather %>%    
-  filter(Station == selected_onestation)
-
-plot_ly(data = onestation_data,
-             x = ~Year,
-             y = ~`Mean Temperature (°C)`,
-         box = list(visible = T),
-         meanline = list(visible = T, 
-                         color = "darkblue"),
-        type = "violin",
-        spanmode = 'hard',
-        marker = list(opacity = 0.5, 
-                      color = 'lightblue',
-                      line = list(width = 0.5, 
-                                  color = 'darkblue')), 
-        scalemode = 'count',
-        color = I('lightblue'),  
-        hoveron = "points+kde",
-        line = list(width=1)) %>%
-layout(title = list(text = "Mean Temperature in Station(s) across the years 2020 to 2024"),
-       xaxis = list(title = "Year"),
-       yaxis = list(title = "Mean Temperature (°C)"))
 
 ```
 
-## 4.3 Compare Mean Temperature (°C) for Multiple Stations Across Different Years
+### 4.4 Highlight Top 10 Extreme Weather Days Per Year
 
 ```{r}
-selected_twostations <- c("Seletar", "Changi")
-
-twostations_data <- weather %>%    
-  filter(Station == selected_twostations)
-
-# filter each year
-twostations_data_2021 <- twostations_data %>%
-  filter(Year == 2021)
-twostations_data_2022 <- twostations_data %>%
-  filter(Year == 2022)
-twostations_data_2023 <- twostations_data %>%
-  filter(Year == 2023)
-
-p1 <- plot_ly(data = twostations_data_2021,
-             x = ~Station,
-             y = ~`Mean Temperature (°C)`,
-         box = list(visible = T),
-         meanline = list(visible = T, 
-                         color = "darkblue"),
-        type = "violin",
-        spanmode = 'hard',
-        marker = list(opacity = 0.5, 
-                      color = 'lightblue',
-                      line = list(width = 0.5, 
-                                  color = 'darkblue')), 
-        scalemode = 'count',
-        color = ~Station,  
-        hoveron = "points+kde",
-        line = list(width=1)) %>%
-  layout(title = list(text = "2021"),
-         xaxis = list(title = "2021"),
-         yaxis = list(title = "Mean Temperature (°C)"),
-         showlegend = TRUE) 
-
-p2 <- plot_ly(data = twostations_data_2022,
-             x = ~Station,
-             y = ~`Mean Temperature (°C)`,
-         box = list(visible = T),
-         meanline = list(visible = T, 
-                         color = "darkblue"),
-        type = "violin",
-        spanmode = 'hard',
-        marker = list(opacity = 0.5, 
-                      color = 'lightblue',
-                      line = list(width = 0.5, 
-                                  color = 'darkblue')), 
-        scalemode = 'count',
-        color = ~Station,  
-        hoveron = "points+kde",
-        line = list(width=1)) %>%
-  layout(xaxis = list(title = "2022"),
-         yaxis = list(title = "Mean Temperature (°C)"),
-         showlegend = FALSE)
-
-p3 <- plot_ly(data = twostations_data_2023,
-             x = ~Station,
-             y = ~`Mean Temperature (°C)`,
-         box = list(visible = T),
-         meanline = list(visible = T, 
-                         color = "darkblue"),
-        type = "violin",
-        spanmode = 'hard',
-        marker = list(opacity = 0.5, 
-                      color = 'lightblue',
-                      line = list(width = 0.5, 
-                                  color = 'darkblue')), 
-        scalemode = 'count',
-        color = ~Station,  
-        hoveron = "points+kde",
-        line = list(width=1)) %>%
-  layout(xaxis = list(title = "2023"),
-         yaxis = list(title = "Mean Temperature (°C)"),
-         showlegend = FALSE)
-
-subplot(p1, p2, p3, 
-        nrows = 1, 
-        shareX = TRUE, 
-        shareY = TRUE) %>%
-  layout(title = "Mean Temperature in Station(s) across the years 2021 to 2023")
-
-```
-
-## 4.4 Compare Daily Rainfall Total (mm) for Station(s) Across the specified Year
-
-```{r}
-library(tidyverse)
+library(dplyr)
 library(lubridate)
 library(plotly)
 
-# Convert Date column to Date format
-weather$Date <- ymd(weather$Date)
+# Prepare the data: extract year and get Top 10 rainiest days per year
+top_rain_days <- weather %>%
+  mutate(Date = ymd(Date),
+         Year = year(Date)) %>%
+  group_by(Year) %>%
+  slice_max(`Daily Rainfall Total (mm)`, n = 10, with_ties = FALSE) %>%
+  ungroup()
 
-# Extract Year, Month, Day
-weather$Year <- year(weather$Date)
-weather$Month <- month(weather$Date)
-weather$Day <- day(weather$Date)
-
-# User defines the year
-selected_year <- 2021
-
-# Filter data for the specified year and group by Station
-allstations_year <- weather %>%
-  group_by(Station) %>%
-  filter(Year == selected_year)
-
-# Create ggplot
-p1 <- ggplot(allstations_year, 
-             aes(x = Station, y = `Daily Rainfall Total (mm)`)) +
-  geom_point(aes(color = `Daily Rainfall Total (mm)`,
-                 text = paste('Year:', Year,
-                              'Month:', Month,
-                              'Day:', Day,
-                              'Rainfall:', `Daily Rainfall Total (mm)`)),
-             size = 2.5) +
-  labs(title = paste("Daily Rainfall across all Stations in", selected_year),
-       x = "Station",
-       y = "Daily Rainfall Total (mm)") +
-  theme_minimal() +
-  scale_color_gradient(low = "lightblue", high = "darkblue")
-
-# Convert to interactive plot
-ggplotly(p1, tooltip = "text") %>%
-  layout(xaxis = list(tickangle = 45,
-                      tickfont = list(size = 12)),
-         hovermode = 'closest') %>%
-  config(displayModeBar = FALSE)
+# Create plotly bar chart
+plot_ly(top_rain_days,
+        x = ~Date,
+        y = ~`Daily Rainfall Total (mm)`,
+        type = 'bar',
+        color = ~as.factor(Year),
+        text = ~paste0(
+          "📅 Date: ", Date, "<br>",
+          "📍 Station: ", Station, "<br>",
+          "🌧️ Rainfall: ", round(`Daily Rainfall Total (mm)`), " mm"
+        ),
+        hoverinfo = "text") %>%
+  layout(title = "Top 10 Rainiest Days Each Year (Interactive)",
+         xaxis = list(title = "Date"),
+         yaxis = list(title = "Daily Rainfall Total (mm)"),
+         legend = list(title = list(text = "Year")),
+         hovermode = "closest")
 
 
 ```
 
-## 4.5 Compare Daily Rainfall Total (mm) for One Station Across Different Years
+### 4.5 Explore Seasonal Patterns Using Monthly Trends by Station
 
 ```{r}
-selected_onestation <- "Ang Mo Kio"
-
-#Filter Ang Mo Kio data
-onestation_data <- weather %>%    
-  filter(Station == selected_onestation)
-
-p1 <- ggplot(onestation_data,
-             aes(x = Year, y = `Daily Rainfall Total (mm)`)) +
-  geom_point(aes(color = `Daily Rainfall Total (mm)`,
-                 text = paste('Year:', Year,'Month:',Month,'Day:', Day,
-                              'Rainfall:',`Daily Rainfall Total (mm)`)),
-             size=2.5) +
-  labs(title = "Daily Rainfall in Station(s) across the years 2021 to 2023",
-       x = "Year",
-       y = "Daily Rainfall Total (mm)") +
-  theme_minimal() +
-  scale_color_gradient(low = "lightblue", high = "darkblue")+
-  scale_x_continuous(breaks = seq(2021, 2023, by = 1)) 
-
-ggplotly(p1, tooltip = "text") %>%
-  layout(hovermode = 'closest') %>%
-  config(displayModeBar = FALSE)
-```
-
-## 4.6 Compare Daily Rainfall Total (mm) for Multiple Stations Across Different Years
-
-```{r}
-#| fig-height: 10
-selected_twostations <- c("Seletar", "Changi")
-
-twostations_data <- weather %>%    
-  filter(Station == selected_twostations)
-
-p <- ggplot(twostations_data, 
-            aes(x = Station, y = `Daily Rainfall Total (mm)`, 
-                color = `Daily Rainfall Total (mm)`)) +
-  geom_point(aes(text = paste('Year:', Year,'Month:',Month,'Day:', Day,
-                              'Rainfall:', `Daily Rainfall Total (mm)`)), size = 2.5) +
-  facet_wrap(~Year, ncol = 1) +
-  labs(title = "Daily Rainfall in Station(s) across the years 2021 to 2023",
-       x = "Station",
-       y = "Daily Rainfall Total (mm)") +
-  theme_minimal() +
-  scale_color_gradient(low = "lightblue", high = "darkblue")
-
-
-ggplotly(p, tooltip = "text") %>%
-  layout(hovermode = 'closest') %>%
-  config(displayModeBar = FALSE)
+weather %>%
+  group_by(Station, Month) %>%
+  summarise(AvgTemp = mean(`Mean Temperature (°C)`, na.rm = TRUE)) %>%
+  ggplot(aes(x = Month, y = AvgTemp, group = Station, color = Station)) +
+  geom_line() +
+  labs(title = "Monthly Temperature Patterns by Station", x = "Month", y = "Avg Temperature (°C)")
 
 ```
+
+
+
+
+
+
+
+
+
+
+
 
 # 5 Confirmatory Data Analysis
 
@@ -517,101 +397,57 @@ ggbetweenstats(data = onestation_data,
 
 ```
 
-## 5.6 Compare Daily Rainfall Total (mm) for for Multiple Stations Across Different Years
 
-**Hypothesis**
 
-*H0 : Daily Rainfall Total in Seletar and Changi across different years are equal*
 
-*H1 : Daily Rainfall Total in Seletar and Changi across different years are not equal*
+
+
+
+### 5.1 CDA - Mean Temp Across Stations for One Year
 
 ```{r}
-#| fig-width: 12
-#| fig-height: 5
-
-# User define parameters
-selected_twostations <- c("Seletar", "Changi")
+selected_year <- 2021
 selected_StatApproach <- "nonparametric"
 
-twostations_data <- weather %>%    
-  filter(Station == selected_twostations)
-
-grouped_ggbetweenstats(data = twostations_data,
-  x = Station,
-  y = `Daily Rainfall Total (mm)`,
-  grouping.var = Year,
-  type= selected_StatApproach, # for non-parametric
-  mean.ci = TRUE, 
-  pairwise.comparisons = TRUE, 
-  pairwise.annotation = FALSE,
-  pairwise.display = "none", 
-  sig.level = NA,
-  p.adjust.method = "fdr",
-  messages = FALSE)
-
+weather %>%
+  filter(Year == selected_year) %>%
+  ggbetweenstats(
+    x = Station,
+    y = `Mean Temperature (°C)`,
+    type = selected_StatApproach,
+    mean.ci = TRUE,
+    pairwise.display = "none",
+    p.adjust.method = "fdr"
+  )
 ```
 
-# 6 UI Design
+### 5.2 CDA - Mean Temp for One Station Across Years
 
-The EDA and CDA tab will consist of two sub-tabs:
+```{r}
+weather %>%
+  filter(Station == "Ang Mo Kio") %>%
+  ggbetweenstats(
+    x = Year,
+    y = `Mean Temperature (°C)`,
+    type = "nonparametric",
+    mean.ci = TRUE,
+    pairwise.display = "none",
+    p.adjust.method = "fdr"
+  )
+```
 
-1.  Exploratory Data Analysis
+### 5.3 CDA - Mean Temp for Two Stations Across Years
 
-2.  Confirmatory Data Analysis
-
-## 6.1 Exploratory Data Analysis
-
-The main objective of exploratory data analysis section is to allow users with the tools to delve into and identify trends within different weather variables across selected year and stations. This interactive experience aims to enhance users' understanding of weather variable patterns and to facilitate the discovery of key insights through visualization. However, for rainfall variable, we will implement dot plots for the better visual.
-
-![](images/clipboard-456216068.png)
-
-::: callout-tip
-## Interactive features
-
-1.  **Choose variable** : Users can choose a weather variable such as Daily Rainfall Total (mm), Mean Temperature (°C), etc.
-2.  **Compare across** : Users are allowed to compare across different stations or between years.
-3.  **Select Stations** : Users can select one or multiple stations for comparison.
-4.  **Select Year** : Users can choose the year for which the data should be visualized.
-5.  **EDA Plot** : When stations are selected under compare across, the plot will display the variation within those stations for the specified year. If years is chosen, the plot will display the trend of selected stations across the years 2021 to 2023.
-:::
-
-### 6.1.1 Test case: Compare Mean Temperature (°C) for One Stations Across Different Years
-
-![](images/clipboard-2207405565.png)
-
-### 6.1.2 Test case: Compare Mean Temperature (°C) for Multiple Stations Across Different Years
-
-![](images/clipboard-1300324140.png)
-
-### 6.1.3 Test case: Compare Daily Rainfall Total (mm) for Station(s) Across the specified Year
-
-![](images/clipboard-2405516460.png)
-
-## 6.2 Confirmatory Data Analysis
-
-The main objective of Confirmatory Data Analysis section is to provide users with a reliable method to ensure the patterns observed in weather variables are true. This section builds on the preliminary findings by offering a statistical approach to validate these patterns across selected years or stations.
-
-![](images/clipboard-1882135096.png)
-
-::: callout-tip
-## Interactive features
-
-1.  **Choose variable** : Users can choose a weather variable such as Daily Rainfall Total (mm), Mean Temperature (°C), etc.
-2.  **Compare across** : Users are allowed to compare across different stations or between years.
-3.  **Statistical Approach**: Users can specify the type of statistical approach they want to use.
-4.  **Select Stations** : Users can select one or multiple stations for comparison.
-5.  **Select Year** : Users can choose the year for which the data should be visualized.
-6.  **CDA Plot** : When stations are selected under compare across, the plot will display the variation within those stations for the specified year. If years is chosen, the plot will display the trend of selected stations across the years 2021 to 2023.
-:::
-
-### 6.2.1 Test case: Compare Mean Temperature (°C) for One Stations Across Different Years
-
-![](images/clipboard-444474855.png)
-
-### 6.2.2 Test case: Compare Mean Temperature (°C) for Multiple Stations Across Different Years
-
-![](images/clipboard-3065426315.png)
-
-### 6.2.3 Test case: Compare Daily Rainfall Total (mm) for Station(s) Across the specified Year
-
-![](images/clipboard-2860953512.png)
+```{r}
+weather %>%
+  filter(Station %in% c("Seletar", "Changi")) %>%
+  grouped_ggbetweenstats(
+    x = Station,
+    y = `Mean Temperature (°C)`,
+    grouping.var = Year,
+    type = "nonparametric",
+    mean.ci = TRUE,
+    pairwise.display = "none",
+    p.adjust.method = "fdr"
+  )
+```
