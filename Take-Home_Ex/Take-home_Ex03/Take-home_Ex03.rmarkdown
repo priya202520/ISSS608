@@ -12,6 +12,8 @@ code-fold: false
 code-summary: "Show the code"
 ---
 
+
+
 # 1 Overview
 
 We are tasked with selecting one module from our proposed Shiny application and completing the following tasks:
@@ -38,25 +40,37 @@ When working in R, we often rely on external packages to add more functionality 
 
 To use these packages, we need to install them first using functions like `install.packages("package_name")`. Once installed, we can load them into our R session using `library(package_name)`. To make this process more efficient, especially when dealing with many packages, we can use tools like `pacman::p_load()` which installs missing packages and loads them in one step.
 
+
+
 ```{r}
 pacman::p_load(tidyverse, naniar,imputeTS, DT, lubridate,ggplot2,ggstatsplot,plotly,
                    patchwork,ggthemes,dplyr,ggridges,gridExtra)
 ```
 
+
+
 ## 3.2 Importing Data
 
 We will use the weather dataset for 17 stations between 2020 to 2024 from [Meteorological Service Singapore (MSS)](http://www.weather.gov.sg/climate-historical-daily/). After cleaning and preparing the data, we narrowed it down to 11 stations. The steps taken during the data preparation process are explained in detail.
+
+
 
 ```{r}
 weather <- read_csv("data/weather_data_cleaned.csv") 
 ```
 
+
+
 ## 3.3 Summarizing the data
+
+
 
 ```{r}
 glimpse(weather)
 
 ```
+
+
 
 # 4 Exploratory Data Analysis
 
@@ -74,11 +88,17 @@ For this section, we will use violin plots and box plots to visualize the trend 
 
 Other exploratory plots may include in the future work.
 
+
+
 ```{r}
 colnames(weather)
 ```
 
+
+
 ### 4.1 Compare Temperature Range (Max - Min) Across Stations by Region
+
+
 
 ```{r}
 weather <- weather %>% 
@@ -108,7 +128,11 @@ weather %>%
 
 ```
 
+
+
 ### 4.2 Compare Monthly Averages of Temperature and Rainfall Across Years
+
+
 
 ```{r}
 # Ensure Month is an ordered factor with month names
@@ -143,7 +167,11 @@ temp_plot / rain_plot
 
 ```
 
+
+
 ### 4.3 Top 10 Wettest Stations (Annual Avg)
+
+
 
 ```{r}
 station_summary <- weather %>%
@@ -161,7 +189,11 @@ station_summary %>%
   theme(plot.title = element_text(face = "bold"))
 ```
 
+
+
 ### 4.4 Highlight Top 5 Extreme Weather Days Per Year
+
+
 
 ```{r}
 library(dplyr)
@@ -210,7 +242,11 @@ plot_ly(top5_rain,
 
 ```
 
+
+
 ### 4.5 Explore Seasonal Patterns Using Monthly Trends by Station
+
+
 
 ```{r}
 weather %>%
@@ -221,6 +257,8 @@ weather %>%
   labs(title = "Monthly Temperature Patterns by Station", x = "Month", y = "Avg Temperature (°C)")
 
 ```
+
+
 
 # 5 Confirmatory Data Analysis
 
@@ -241,6 +279,8 @@ For this section, we will conduct statistical analysis by using **Kruskal-Wallis
 *H0 : Daily mean temperature in 2024 across different stations are equal*
 
 *H1 : Daily mean temperature in 2024 across different station are not equal*
+
+
 
 ```{r}
 #| fig-width: 12
@@ -269,6 +309,8 @@ ggbetweenstats(data = allstations_year,
 
 ```
 
+
+
 ## 5.2 Compare Mean Temperature (°C) for One Station Across Different Years
 
 **Hypothesis**
@@ -276,6 +318,8 @@ ggbetweenstats(data = allstations_year,
 *H0 : Daily mean temperature in Ang Mo Kio across different years are equal*
 
 *H1 : Daily mean temperature in Ang Mo Kio across different years are not equal*
+
+
 
 ```{r}
 selected_onestation <- "Ang Mo Kio"
@@ -299,6 +343,8 @@ ggbetweenstats(data = onestation_data,
 
 ```
 
+
+
 ## 5.3 Compare Mean Temperature (°C) for Multiple Stations Across Different Years
 
 **Hypothesis**
@@ -306,6 +352,8 @@ ggbetweenstats(data = onestation_data,
 *H0 : Daily mean temperature in Seletar and Changi across different years are equal*
 
 *H1 : Daily mean temperature in Seletar and Changi across different years are not equal*
+
+
 
 ```{r}
 #| fig-width: 12
@@ -333,6 +381,8 @@ grouped_ggbetweenstats(data = twostations_data,
 
 ```
 
+
+
 ## 5.4 Compare Daily Rainfall Total (mm) for Station(s) Across the specified Year
 
 **Hypothesis**
@@ -340,6 +390,8 @@ grouped_ggbetweenstats(data = twostations_data,
 *H0 : Daily Rainfall Total in 2024 across different stations are equal*
 
 *H1 : Daily Rainfall Total in 2024 across different station are not equal*
+
+
 
 ```{r}
 #| fig-width: 12
@@ -368,6 +420,8 @@ ggbetweenstats(data = allstations_year,
 
 ```
 
+
+
 ## 5.5 Compare Daily Rainfall Total (mm) for One Station Across Different Years
 
 **Hypothesis**
@@ -375,6 +429,8 @@ ggbetweenstats(data = allstations_year,
 *H0 : Daily Rainfall Total in Ang Mo Kio across different years are equal*
 
 *H1 : Daily Rainfall Total in Ang Mo Kio across different years are not equal*
+
+
 
 ```{r}
 selected_onestation <- "Ang Mo Kio"
@@ -398,4 +454,7 @@ ggbetweenstats(data = onestation_data,
 
 ```
 
+
+
 ### 
+
